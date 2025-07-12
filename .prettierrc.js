@@ -18,4 +18,4 @@ module.exports = {
   trailingComma: 'none',
   useTabs: false,
   plugins: ['prettier-plugin-tailwindcss']
-}
+} 
