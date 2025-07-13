@@ -13,31 +13,33 @@ Glob: apps/web/**/*.{ts,tsx,js,jsx,json,css,md}
 
 ```bash
 apps/web/src/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx         # Root layout
-│   ├── page.tsx           # Home page
-│   ├── (auth)/            # Route groups
-│   │   ├── login/
-│   │   └── register/
-│   └── api/               # API routes (gerekirse)
-├── components/             # Reusable components
-│   ├── ui/                # Base UI components
-│   ├── forms/             # Form components
-│   └── layout/            # Layout components
-├── hooks/                 # Custom React hooks
-├── services/              # API service functions
-├── utils/                 # Utility functions
-├── types/                 # TypeScript type definitions
-├── constants/             # Constants and enums
-├── styles/                # Global styles
-└── __tests__/            # Test files
+src/
+├── app/                  # Sayfa yönlendirmeleri, route grupları ve UI bileşenlerinin render edildiği ana klasör.
+├── components/           # Tekrar kullanılabilir genel bileşenler.
+├── hooks/                # Tekrar kullanılabilir global hooklar.
+├── services/             # API çağrıları için global servis dosyaları.
+├── utils/                # Proje içinde tekrar kullanılabilir, saf (pure) yardımcı fonksiyonlar. Örneğin, tarih formatlama, metin dönüştürme gibi bağımsız işlemler.
+├── lib/                  # Harici kütüphaneler, özel yapılandırmalar ve proje genelinde kullanılan genişletilmiş utility fonksiyonları. Örneğin, API isteği, `cn` gibi class yönetim fonksiyonları, auth işlemleri vb.
+├── __test__/             # Test dosyalarının konulduğu klasör. (opsiyonel)
+├── modules/              # Modüler yapı.
+│   ├── module1/
+│   │   ├── hooks/        # Modüle1'e özel hooklar.
+│   │   ├── components/   # Modüle1'e özel bileşenler.
+│   │   ├── utils/        # Modüle1'e özel yardımcı araçlar.
+│   │   ├── services/     # Modüle1'e özel API servisleri.
+│   │   ├── views/        # Modüle1'e özel sayfalar.
+│   ├── module2/
+│   └── ... module_n/
+public/
+├── images/               # İhtiyaç halinde kullanılacak resimler.
+└── icons/                # İhtiyaç halinde kullanılacak ikonlar.
 ```
 
 ## 🎯 Component Kuralları
 
 ### Component Yapısı
 
-```typescript
+```tsx
 // ✅ Doğru
 interface UserCardProps {
   user: User
@@ -45,11 +47,7 @@ interface UserCardProps {
   className?: string
 }
 
-export const UserCard: React.FC<UserCardProps> = ({
-  user,
-  onEdit,
-  className
-}) => {
+export function UserCard({ user, onEdit, className }: UserCardProps) {
   return (
     <div className={cn('user-card', className)}>
       <h3>{user.name}</h3>
@@ -78,6 +76,9 @@ ProductCard.tsx
 NavigationMenu.tsx
 useAuth.ts
 useApi.ts
+// service ve store için ✅ Doğru
+user.service.ts
+user.store.ts
 
 // ❌ Yanlış
 userProfile.tsx
@@ -85,6 +86,71 @@ product-card.tsx
 nav.tsx
 useauth.ts
 ```
+
+
+### cn Kullanımı
+
+
+Aşağıya `cn` kullanımı için **Frontend (WEB) Rules** dokümanına eklenebilecek kuralları, örneklerle birlikte kısa ve net şekilde hazırladım:
+
+---
+
+## 🎨 Styling Kuralları
+
+### ✅ **`cn` (classNames) Kullanımı**
+
+Tailwind CSS ile `className` tanımlarında koşullu sınıfları daha okunabilir hale getirmek için `cn` (genellikle `clsx` veya `classnames` türevi) kullanılmalıdır. `lib/utils.ts` içinde tanımlı olan `cn` fonksiyonu şu şekilde kullanılmalıdır:
+
+#### 📌 Doğru Kullanım
+
+```tsx
+<div
+  className={cn(
+    'mb-2',
+    {
+      'text-red-500': hasError,
+      'text-green-500': !hasError
+    }
+  )}
+>
+  Email
+</div>
+```
+
+```tsx
+// opsiyonel className prop'u olan bir bileşende
+export function Button({ className }: { className?: string }) {
+  return (
+    <button
+      className={cn('px-4 py-2 rounded', className)}
+    >
+      Gönder
+    </button>
+  )
+}
+```
+
+#### 🚫 Yanlış Kullanım
+
+```tsx
+// koşulsuz string birleştirme
+className={`px-4 py-2 rounded ${isError ? 'text-red-500' : ''}`}
+
+// gereksiz string concat
+className={'text-lg' + (active ? ' font-bold' : '')}
+
+// className'e doğrudan `clsx` yazmak
+import clsx from 'clsx'
+className={clsx('a', { b: true })} // ❌ cn kullanılmalı
+```
+
+---
+
+### ✅ Kurallar Özeti
+
+* `className` içinde koşullu stil uygulanacaksa `cn()` kullanılmalı.
+* `cn()` içinde sabit sınıflar string olarak, koşullu sınıflar `{ 'class-name': condition }` şeklinde yazılmalı.
+* `clsx` ya da `classnames` doğrudan kullanılmamalı, bunun yerine proje genelinde tanımlı `cn()` fonksiyonu tercih edilmelidir.
 
 ### Props Interface
 
@@ -111,7 +177,7 @@ interface ButtonProps {
 
 ### Tailwind CSS Kullanımı
 
-```typescript
+```tsx
 // ✅ Doğru
 <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
   <h2 className="text-xl font-semibold text-gray-900">
@@ -130,7 +196,7 @@ interface ButtonProps {
 
 ### CSS Module Kullanımı (Gerekirse)
 
-```typescript
+```tsx
 // ✅ Doğru
 import styles from './UserCard.module.css'
 
@@ -145,7 +211,7 @@ export const UserCard = () => {
 
 ### Responsive Design
 
-```typescript
+```tsx
 // ✅ Doğru
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
   <div className="p-4 bg-white rounded-lg">
@@ -183,11 +249,11 @@ const [state, setState] = useState({
 
 ```typescript
 // ✅ Doğru
-export const useAuth = () => {
+export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  const login = async (credentials: LoginCredentials) => {
+  async function login(credentials: LoginCredentials) {
     try {
       setIsLoading(true)
       const response = await authService.login(credentials)
@@ -353,7 +419,7 @@ export const UserForm = () => {
 
 ### Protected Routes
 
-```typescript
+```tsx
 // ✅ Doğru
 export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children
@@ -380,36 +446,36 @@ export const ProtectedRoute = ({ children }: any) => {
 
 ### Authorization HOC
 
-```typescript
-// ✅ Doğru
-export const withAuthorization = (Component: React.ComponentType<any>) => {
-  return (props: any) => {
-    const { user } = useAuth()
-    const requiredPermissions = Component.requiredPermissions || []
+```tsx
+type Role = 'user' | 'seller' | 'admin' | 'godlike'
 
-    if (!user) {
-      return <Navigate to="/login" replace />
-    }
+interface WithAuthorizationOptions {
+  requiredRoles?: Role[]
+  redirectTo?: string
+}
 
-    if (requiredPermissions.length > 0) {
-      const hasPermission = requiredPermissions.some(permission =>
-        user.permissions.includes(permission)
-      )
-      
-      if (!hasPermission) {
-        return <div>Access denied</div>
+export function withAuthorization<P extends object>(
+  Component: React.ComponentType<P>,
+  options?: WithAuthorizationOptions
+): React.FC<P> {
+  const { requiredRoles = [], redirectTo = '/login' } = options || {}
+
+  return function AuthorizedComponent(props: P) {
+    const { user, isLoading } = useAuth()
+    const router = useRouter()
+
+    useEffect(() => {
+      if (!isLoading && (!user || (requiredRoles.length && !requiredRoles.includes(user.role)))) {
+        router.replace(redirectTo)
       }
-    }
+    }, [isLoading, user, requiredRoles, router, redirectTo])
+
+    if (isLoading || !user) return <div className='p-4'>Yükleniyor...</div>
+    if (requiredRoles.length && !requiredRoles.includes(user.role)) return null
 
     return <Component {...props} />
   }
 }
-
-// Kullanım
-const AdminPanel = () => <div>Admin Panel</div>
-AdminPanel.requiredPermissions = ['admin']
-
-export default withAuthorization(AdminPanel)
 ```
 
 ## 🧪 Testing
@@ -481,7 +547,7 @@ describe('useAuth', () => {
 
 ### Memoization
 
-```typescript
+```tsx
 // ✅ Doğru
 export const UserList = React.memo(({ users }: { users: User[] }) => {
   return (
@@ -507,7 +573,7 @@ export const UserList = ({ users }: { users: User[] }) => {
 
 ### Lazy Loading
 
-```typescript
+```tsx
 // ✅ Doğru
 const AdminPanel = lazy(() => import('./AdminPanel'))
 
@@ -531,7 +597,7 @@ export const App = () => {
 
 ### Loading States
 
-```typescript
+```tsx
 // ✅ Doğru
 export const UserProfile = () => {
   const { user, isLoading, error } = useUser()
@@ -561,7 +627,7 @@ export const UserProfile = () => {
 
 ### Error Boundaries
 
-```typescript
+```tsx
 // ✅ Doğru
 export class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
