@@ -1,0 +1,310 @@
+---
+globs: apps/**/*.ts,apps/**/*.md,apps/**/*.json
+alwaysApply: false
+---
+
+<!--
+Glob: **/*.{js,ts,json,md}
+-->
+
+# 🏗️ MONO_REPO GENEL RULES
+
+## 📁 Proje Yapısı
+
+```bash
+mono-repo/
+├── .prettierrc.js          # Ortak Prettier konfigürasyonu
+├── .prettierignore         # Formatlanmayacak dosyalar
+├── package.json            # Root scripts ve workspace yönetimi
+├── pnpm-lock.yaml         # Lock file (commit edilmeli)
+└── apps/
+    ├── api/               # Backend (NestJS)
+    └── web/               # Frontend (Next.js)
+```
+
+## 🚀 Script Kullanımı
+
+### Root Komutları
+
+```bash
+# Tüm projeleri çalıştır
+pnpm dev                    # API + Web paralel
+pnpm dev:api               # Sadece API
+pnpm dev:web               # Sadece Web
+
+# Build işlemleri
+pnpm build:api             # API build
+pnpm build:web             # Web build
+
+# Code Quality
+pnpm format                # Tüm dosyaları formatla
+pnpm format:check          # Format kontrolü
+pnpm lint                  # ESLint kontrolü
+```
+
+### Proje Bazlı Komutlar
+
+```bash
+# API projesi için
+pnpm --filter api start:dev
+pnpm --filter api build
+pnpm --filter api format
+
+# Web projesi için
+pnpm --filter web dev
+pnpm --filter web build
+pnpm --filter web format
+```
+
+## 📦 Package Management
+
+### Yeni Paket Ekleme
+
+```bash
+# Root'a paket ekleme
+pnpm add -w <package-name>
+
+# API'ye paket ekleme
+pnpm --filter api add <package-name>
+
+# Web'e paket ekleme
+pnpm --filter web add <package-name>
+
+# Dev dependency ekleme
+pnpm --filter web add -D <package-name>
+```
+
+### Workspace Bağımlılıkları
+
+```bash
+# API'den Web'e bağımlılık
+pnpm --filter web add api@workspace:*
+
+# Web'den API'ye bağımlılık (gerekirse)
+pnpm --filter api add web@workspace:*
+```
+
+## 🔧 Konfigürasyon
+
+### Prettier
+
+- **Dosya:** `.prettierrc.js` (root)
+- **Semicolon:** `false`
+- **Single Quote:** `true`
+- **Trailing Comma:** `none`
+- **Print Width:** `120`
+
+### Git
+
+- **Branch Strategy:** feature/component-name
+- **Commit Message:** conventional commits
+- **Ignore:** node_modules, dist, .next, .env
+
+## 📋 Dosya Naming Conventions
+
+### Klasör İsimleri
+
+```bash
+src/
+├── components/     # React components
+├── hooks/         # Custom hooks
+├── services/      # API services
+├── utils/         # Utility functions
+├── types/         # TypeScript types
+├── constants/     # Constants
+└── styles/        # CSS/SCSS files
+```
+
+### Dosya İsimleri
+
+```bash
+# Components
+UserProfile.tsx
+UserProfile.module.css
+UserProfile.test.tsx
+
+# Hooks
+useAuth.ts
+useApi.ts
+
+# Services
+authService.ts
+userService.ts
+
+# Types
+user.types.ts
+api.types.ts
+```
+
+## 🔄 Development Workflow
+
+### 1. Yeni Feature
+
+```bash
+git checkout -b feature/user-authentication
+# Geliştirme yap
+pnpm format
+pnpm lint
+git add .
+git commit -m "feat: add user authentication"
+```
+
+### 2. Code Review
+
+```bash
+# Format kontrolü
+pnpm format:check
+
+# Lint kontrolü
+pnpm lint
+
+# Type check
+pnpm --filter web build
+pnpm --filter api build
+```
+
+### 3. Deployment
+
+```bash
+# Production build
+pnpm build:api
+pnpm build:web
+
+# Test
+pnpm test
+```
+
+## 🛠️ Tooling
+
+### IDE Ayarları
+
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "typescript.preferences.importModuleSpecifier": "relative"
+}
+```
+
+### VS Code Extensions
+
+- Prettier
+- ESLint
+- TypeScript
+- Tailwind CSS IntelliSense
+- Auto Rename Tag
+
+## 📊 Monitoring & Debugging
+
+### Logging
+
+```typescript
+// API'de
+console.log('[API]', message)
+
+// Web'de
+console.log('[WEB]', message)
+```
+
+### Error Handling
+
+```typescript
+// Ortak error formatı
+interface ApiError {
+  message: string
+  code: string
+  timestamp: string
+}
+```
+
+## 🔒 Security
+
+### Environment Variables
+
+```bash
+# .env.example dosyası oluştur
+# Hassas bilgileri .env dosyasında tut
+# .env dosyasını git'e ekleme
+```
+
+### API Security
+
+- CORS ayarları
+- Rate limiting
+- Input validation
+- SQL injection koruması
+
+## 📈 Performance
+
+### Build Optimizasyonu
+
+- Tree shaking
+- Code splitting
+- Bundle analysis
+- Image optimization
+
+### Runtime Performance
+
+- Memoization
+- Lazy loading
+- Caching strategies
+- Database indexing
+
+## 🧪 Testing
+
+### Test Yapısı
+
+```bash
+src/
+├── __tests__/
+│   ├── components/
+│   ├── hooks/
+│   └── utils/
+└── __mocks__/
+```
+
+### Test Komutları
+
+```bash
+pnpm --filter api test
+pnpm --filter web test
+pnpm test:coverage
+```
+
+## 📚 Documentation
+
+### README Dosyaları
+
+- Root README.md
+- apps/api/README.md
+- apps/web/README.md
+
+### API Documentation
+
+- Swagger/OpenAPI
+- Postman collections
+- API endpoint listesi
+
+## 🚨 Troubleshooting
+
+### Yaygın Sorunlar
+
+1. **Port çakışması:** API 3001, Web 3000
+2. **CORS hatası:** API CORS ayarları
+3. **Type errors:** TypeScript strict mode
+4. **Build hatası:** Node version kontrolü
+
+### Debug Komutları
+
+```bash
+# Port kontrolü
+netstat -ano | findstr :3000
+netstat -ano | findstr :3001
+
+# Process kontrolü
+tasklist | findstr node
+
+# Log kontrolü
+pnpm dev:api > api.log 2>&1
+pnpm dev:web > web.log 2>&1
+```

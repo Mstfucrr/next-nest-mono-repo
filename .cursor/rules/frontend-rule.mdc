@@ -1,0 +1,672 @@
+---
+globs: apps/web/**/*.ts,apps/web/**/*.tsx,apps/web/**/*.json,apps/web/**/*.css,apps/web/**/*.md
+alwaysApply: false
+---
+
+<!--
+Glob: apps/web/**/*.{ts,tsx,js,jsx,json,css,md}
+-->
+
+# 🎨 FRONTEND (WEB) RULES
+
+## ��️ Proje Yapısı
+
+```bash
+apps/web/src/
+├── app/                    # Next.js App Router
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Home page
+│   ├── (auth)/            # Route groups
+│   │   ├── login/
+│   │   └── register/
+│   └── api/               # API routes (gerekirse)
+├── components/             # Reusable components
+│   ├── ui/                # Base UI components
+│   ├── forms/             # Form components
+│   └── layout/            # Layout components
+├── hooks/                 # Custom React hooks
+├── services/              # API service functions
+├── utils/                 # Utility functions
+├── types/                 # TypeScript type definitions
+├── constants/             # Constants and enums
+├── styles/                # Global styles
+└── __tests__/            # Test files
+```
+
+## 🎯 Component Kuralları
+
+### Component Yapısı
+
+```typescript
+// ✅ Doğru
+interface UserCardProps {
+  user: User
+  onEdit?: (user: User) => void
+  className?: string
+}
+
+export const UserCard: React.FC<UserCardProps> = ({
+  user,
+  onEdit,
+  className
+}) => {
+  return (
+    <div className={cn('user-card', className)}>
+      <h3>{user.name}</h3>
+      <p>{user.email}</p>
+      {onEdit && (
+        <button onClick={() => onEdit(user)}>
+          Edit
+        </button>
+      )}
+    </div>
+  )
+}
+
+// ❌ Yanlış
+export default function UserCard(props: any) {
+  return <div>{props.user.name}</div>
+}
+```
+
+### Component Naming
+
+```typescript
+// ✅ Doğru
+UserProfile.tsx
+ProductCard.tsx
+NavigationMenu.tsx
+useAuth.ts
+useApi.ts
+
+// ❌ Yanlış
+userProfile.tsx
+product-card.tsx
+nav.tsx
+useauth.ts
+```
+
+### Props Interface
+
+```typescript
+// ✅ Doğru
+interface ButtonProps {
+  children: React.ReactNode
+  variant?: 'primary' | 'secondary' | 'danger'
+  size?: 'sm' | 'md' | 'lg'
+  disabled?: boolean
+  onClick?: () => void
+  className?: string
+}
+
+// ❌ Yanlış
+interface ButtonProps {
+  children: any
+  variant: string
+  onClick: any
+}
+```
+
+## 🎨 Styling Kuralları
+
+### Tailwind CSS Kullanımı
+
+```typescript
+// ✅ Doğru
+<div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
+  <h2 className="text-xl font-semibold text-gray-900">
+    User Profile
+  </h2>
+  <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+    Edit
+  </button>
+</div>
+
+// ❌ Yanlış
+<div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md text-xl font-semibold text-gray-900">
+  User Profile
+</div>
+```
+
+### CSS Module Kullanımı (Gerekirse)
+
+```typescript
+// ✅ Doğru
+import styles from './UserCard.module.css'
+
+export const UserCard = () => {
+  return (
+    <div className={styles.card}>
+      <h3 className={styles.title}>User Name</h3>
+    </div>
+  )
+}
+```
+
+### Responsive Design
+
+```typescript
+// ✅ Doğru
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  <div className="p-4 bg-white rounded-lg">
+    Content
+  </div>
+</div>
+
+// ❌ Yanlış
+<div className="grid grid-cols-3 gap-4">
+  <div className="p-4 bg-white rounded-lg">
+    Content
+  </div>
+</div>
+```
+
+## 🔗 State Management
+
+### Local State (useState)
+
+```typescript
+// ✅ Doğru
+const [isLoading, setIsLoading] = useState(false)
+const [user, setUser] = useState<User | null>(null)
+const [error, setError] = useState<string | null>(null)
+
+// ❌ Yanlış
+const [state, setState] = useState({
+  isLoading: false,
+  user: null,
+  error: null
+})
+```
+
+### Custom Hooks
+
+```typescript
+// ✅ Doğru
+export const useAuth = () => {
+  const [user, setUser] = useState<User | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  const login = async (credentials: LoginCredentials) => {
+    try {
+      setIsLoading(true)
+      const response = await authService.login(credentials)
+      setUser(response.user)
+    } catch (error) {
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return { user, isLoading, login }
+}
+
+// ❌ Yanlış
+export const useAuth = () => {
+  return {
+    user: null,
+    login: () => {}
+  }
+}
+```
+
+## 🌐 API Integration
+
+### Service Functions
+
+```typescript
+// ✅ Doğru
+export const userService = {
+  async getUsers(): Promise<User[]> {
+    const response = await fetch('/api/users')
+    if (!response.ok) {
+      throw new Error('Failed to fetch users')
+    }
+    return response.json()
+  },
+
+  async createUser(userData: CreateUserData): Promise<User> {
+    const response = await fetch('/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    })
+    if (!response.ok) {
+      throw new Error('Failed to create user')
+    }
+    return response.json()
+  }
+}
+
+// ❌ Yanlış
+export const userService = {
+  getUsers: () => fetch('/api/users').then(res => res.json()),
+  createUser: (data: any) => fetch('/api/users', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }).then(res => res.json())
+}
+```
+
+### Error Handling
+
+```typescript
+// ✅ Doğru
+const [users, setUsers] = useState<User[]>([])
+const [error, setError] = useState<string | null>(null)
+const [isLoading, setIsLoading] = useState(false)
+
+const fetchUsers = async () => {
+  try {
+    setIsLoading(true)
+    setError(null)
+    const data = await userService.getUsers()
+    setUsers(data)
+  } catch (err) {
+    setError(err instanceof Error ? err.message : 'An error occurred')
+  } finally {
+    setIsLoading(false)
+  }
+}
+
+// ❌ Yanlış
+const fetchUsers = async () => {
+  const data = await userService.getUsers()
+  setUsers(data)
+}
+```
+
+## 📝 Form Handling
+
+### React Hook Form
+
+```typescript
+// ✅ Doğru
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+
+const userSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Invalid email address'),
+  age: z.number().min(18, 'Must be at least 18 years old')
+})
+
+type UserFormData = z.infer<typeof userSchema>
+
+export const UserForm = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting }
+  } = useForm<UserFormData>({
+    resolver: zodResolver(userSchema)
+  })
+
+  const onSubmit = async (data: UserFormData) => {
+    try {
+      await userService.createUser(data)
+    } catch (error) {
+      console.error('Failed to create user:', error)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register('name')} />
+      {errors.name && <span>{errors.name.message}</span>}
+      
+      <input {...register('email')} />
+      {errors.email && <span>{errors.email.message}</span>}
+      
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? 'Creating...' : 'Create User'}
+      </button>
+    </form>
+  )
+}
+
+// ❌ Yanlış
+export const UserForm = () => {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault()
+    // Validation logic here
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+      <input value={email} onChange={(e) => setEmail(e.target.value)} />
+      <button type="submit">Submit</button>
+    </form>
+  )
+}
+```
+
+## 🔒 Authentication & Authorization
+
+### Protected Routes
+
+```typescript
+// ✅ Doğru
+export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+  children
+}) => {
+  const { user, isLoading } = useAuth()
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
+
+  return <>{children}</>
+}
+
+// ❌ Yanlış
+export const ProtectedRoute = ({ children }: any) => {
+  const user = localStorage.getItem('user')
+  return user ? children : <div>Not authorized</div>
+}
+```
+
+### Authorization HOC
+
+```typescript
+// ✅ Doğru
+export const withAuthorization = (Component: React.ComponentType<any>) => {
+  return (props: any) => {
+    const { user } = useAuth()
+    const requiredPermissions = Component.requiredPermissions || []
+
+    if (!user) {
+      return <Navigate to="/login" replace />
+    }
+
+    if (requiredPermissions.length > 0) {
+      const hasPermission = requiredPermissions.some(permission =>
+        user.permissions.includes(permission)
+      )
+      
+      if (!hasPermission) {
+        return <div>Access denied</div>
+      }
+    }
+
+    return <Component {...props} />
+  }
+}
+
+// Kullanım
+const AdminPanel = () => <div>Admin Panel</div>
+AdminPanel.requiredPermissions = ['admin']
+
+export default withAuthorization(AdminPanel)
+```
+
+## 🧪 Testing
+
+### Component Testing
+
+```typescript
+// ✅ Doğru
+import { render, screen, fireEvent } from '@testing-library/react'
+import { UserCard } from './UserCard'
+
+describe('UserCard', () => {
+  const mockUser = {
+    id: 1,
+    name: 'John Doe',
+    email: 'john@example.com'
+  }
+
+  it('renders user information correctly', () => {
+    render(<UserCard user={mockUser} />)
+    
+    expect(screen.getByText('John Doe')).toBeInTheDocument()
+    expect(screen.getByText('john@example.com')).toBeInTheDocument()
+  })
+
+  it('calls onEdit when edit button is clicked', () => {
+    const mockOnEdit = jest.fn()
+    render(<UserCard user={mockUser} onEdit={mockOnEdit} />)
+    
+    fireEvent.click(screen.getByText('Edit'))
+    expect(mockOnEdit).toHaveBeenCalledWith(mockUser)
+  })
+})
+
+// ❌ Yanlış
+describe('UserCard', () => {
+  it('works', () => {
+    render(<UserCard />)
+    expect(true).toBe(true)
+  })
+})
+```
+
+### Hook Testing
+
+```typescript
+// ✅ Doğru
+import { renderHook, act } from '@testing-library/react'
+import { useAuth } from './useAuth'
+
+describe('useAuth', () => {
+  it('should handle login correctly', async () => {
+    const { result } = renderHook(() => useAuth())
+
+    await act(async () => {
+      await result.current.login({
+        email: 'test@example.com',
+        password: 'password'
+      })
+    })
+
+    expect(result.current.user).toBeDefined()
+    expect(result.current.isLoading).toBe(false)
+  })
+})
+```
+
+## 📱 Performance
+
+### Memoization
+
+```typescript
+// ✅ Doğru
+export const UserList = React.memo(({ users }: { users: User[] }) => {
+  return (
+    <div>
+      {users.map(user => (
+        <UserCard key={user.id} user={user} />
+      ))}
+    </div>
+  )
+})
+
+// ❌ Yanlış
+export const UserList = ({ users }: { users: User[] }) => {
+  return (
+    <div>
+      {users.map(user => (
+        <UserCard key={user.id} user={user} />
+      ))}
+    </div>
+  )
+}
+```
+
+### Lazy Loading
+
+```typescript
+// ✅ Doğru
+const AdminPanel = lazy(() => import('./AdminPanel'))
+
+export const App = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AdminPanel />
+    </Suspense>
+  )
+}
+
+// ❌ Yanlış
+import AdminPanel from './AdminPanel'
+
+export const App = () => {
+  return <AdminPanel />
+}
+```
+
+## 🎨 UI/UX Guidelines
+
+### Loading States
+
+```typescript
+// ✅ Doğru
+export const UserProfile = () => {
+  const { user, isLoading, error } = useUser()
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center p-8">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+    </div>
+  }
+
+  if (error) {
+    return <div className="text-red-500 p-4">{error}</div>
+  }
+
+  if (!user) {
+    return <div className="text-gray-500 p-4">User not found</div>
+  }
+
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold">{user.name}</h1>
+      <p className="text-gray-600">{user.email}</p>
+    </div>
+  )
+}
+```
+
+### Error Boundaries
+
+```typescript
+// ✅ Doğru
+export class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true }
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo)
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-4 text-center">
+          <h2 className="text-xl font-semibold text-red-600">
+            Something went wrong
+          </h2>
+          <button
+            onClick={() => this.setState({ hasError: false })}
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Try again
+          </button>
+        </div>
+      )
+    }
+
+    return this.props.children
+  }
+}
+```
+
+## 📊 Analytics & Monitoring
+
+### Error Tracking
+
+```typescript
+// ✅ Doğru
+export const logError = (error: Error, context?: Record<string, any>) => {
+  console.error('[ERROR]', {
+    message: error.message,
+    stack: error.stack,
+    context,
+    timestamp: new Date().toISOString()
+  })
+  
+  // Send to error tracking service
+  // Sentry.captureException(error, { extra: context })
+}
+
+// ❌ Yanlış
+export const logError = (error: any) => {
+  console.error(error)
+}
+```
+
+### Performance Monitoring
+
+```typescript
+// ✅ Doğru
+export const usePerformanceMonitor = (componentName: string) => {
+  useEffect(() => {
+    const startTime = performance.now()
+    
+    return () => {
+      const endTime = performance.now()
+      console.log(`[PERF] ${componentName} render time: ${endTime - startTime}ms`)
+    }
+  })
+}
+```
+
+## 🔧 Development Tools
+
+### VS Code Settings
+
+```json
+{
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  }
+}
+```
+
+### ESLint Rules
+
+```json
+{
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-unused-vars": "error",
+    "react-hooks/exhaustive-deps": "error",
+    "react/prop-types": "off"
+  }
+}
+```

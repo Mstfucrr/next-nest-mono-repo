@@ -1,0 +1,956 @@
+---
+globs: apps/api/**/*.ts,apps/api/**/*.json
+alwaysApply: false
+---
+
+
+<!--
+Glob: apps/api/**/*.{ts,js,json,md}
+-->
+
+# 🔧 BACKEND (API) RULES
+
+## 🏗️ Proje Yapısı
+
+```bash
+apps/api/src/
+├── main.ts                 # Application entry point
+├── app.module.ts           # Root module
+├── app.controller.ts       # Root controller
+├── app.service.ts          # Root service
+├── modules/                # Feature modules
+│   ├── auth/              # Authentication module
+│   │   ├── auth.module.ts
+│   │   ├── auth.controller.ts
+│   │   ├── auth.service.ts
+│   │   ├── guards/
+│   │   ├── strategies/
+│   │   └── dto/
+│   ├── users/             # Users module
+│   │   ├── users.module.ts
+│   │   ├── users.controller.ts
+│   │   ├── users.service.ts
+│   │   ├── entities/
+│   │   └── dto/
+│   └── common/            # Shared modules
+│       ├── guards/
+│       ├── interceptors/
+│       ├── filters/
+│       └── decorators/
+├── config/                # Configuration
+│   ├── database.config.ts
+│   ├── jwt.config.ts
+│   └── app.config.ts
+├── database/              # Database related
+│   ├── migrations/
+│   ├── seeds/
+│   └── entities/
+├── utils/                 # Utility functions
+├── types/                 # TypeScript types
+└── test/                  # Test files
+```
+
+## 🎯 Module Kuralları
+
+### Module Yapısı
+
+```typescript
+// ✅ Doğru
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    JwtModule.register(jwtConfig),
+    PassportModule
+  ],
+  controllers: [UsersController],
+  providers: [UsersService, JwtStrategy],
+  exports: [UsersService]
+})
+export class UsersModule {}
+
+// ❌ Yanlış
+@Module({
+  controllers: [UsersController],
+  providers: [UsersService]
+})
+export class UsersModule {}
+```
+
+### Module Naming
+
+```typescript
+// ✅ Doğru
+UsersModule
+AuthModule
+ProductsModule
+OrdersModule
+
+// ❌ Yanlış
+usersModule
+auth_module
+Products
+```
+
+## 🎮 Controller Kuralları
+
+### Controller Yapısı
+
+```typescript
+// ✅ Doğru
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async findAll(): Promise<User[]> {
+    return this.usersService.findAll()
+  }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    return this.usersService.findOne(id)
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.usersService.create(createUserDto)
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto
+  ): Promise<User> {
+    return this.usersService.update(id, updateUserDto)
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.usersService.remove(id)
+  }
+}
+
+// ❌ Yanlış
+@Controller('users')
+export class UsersController {
+  @Get()
+  findAll() {
+    return this.usersService.findAll()
+  }
+
+  @Post()
+  create(@Body() body: any) {
+    return this.usersService.create(body)
+  }
+}
+```
+
+### HTTP Status Codes
+
+```typescript
+// ✅ Doğru
+@Get()
+@HttpCode(200)
+async findAll(): Promise<User[]> {
+  return this.usersService.findAll()
+}
+
+@Post()
+@HttpCode(201)
+async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  return this.usersService.create(createUserDto)
+}
+
+@Delete(':id')
+@HttpCode(204)
+async remove(@Param('id') id: number): Promise<void> {
+  return this.usersService.remove(id)
+}
+
+// ❌ Yanlış
+@Get()
+async findAll(): Promise<User[]> {
+  return this.usersService.findAll()
+}
+```
+
+## 🔧 Service Kuralları
+
+### Service Yapısı
+
+```typescript
+// ✅ Doğru
+@Injectable()
+export class UsersService {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private readonly logger: Logger
+  ) {}
+
+  async findAll(): Promise<User[]> {
+    try {
+      this.logger.log('Fetching all users')
+      return await this.userRepository.find()
+    } catch (error) {
+      this.logger.error('Failed to fetch users', error.stack)
+      throw new InternalServerErrorException('Failed to fetch users')
+    }
+  }
+
+  async findOne(id: number): Promise<User> {
+    try {
+      const user = await this.userRepository.findOne({ where: { id } })
+      if (!user) {
+        throw new NotFoundException(`User with ID ${id} not found`)
+      }
+      return user
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error
+      }
+      this.logger.error(`Failed to fetch user with ID ${id}`, error.stack)
+      throw new InternalServerErrorException('Failed to fetch user')
+    }
+  }
+
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    try {
+      const user = this.userRepository.create(createUserDto)
+      return await this.userRepository.save(user)
+    } catch (error) {
+      this.logger.error('Failed to create user', error.stack)
+      throw new InternalServerErrorException('Failed to create user')
+    }
+  }
+
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    try {
+      const user = await this.findOne(id)
+      Object.assign(user, updateUserDto)
+      return await this.userRepository.save(user)
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error
+      }
+      this.logger.error(`Failed to update user with ID ${id}`, error.stack)
+      throw new InternalServerErrorException('Failed to update user')
+    }
+  }
+
+  async remove(id: number): Promise<void> {
+    try {
+      const user = await this.findOne(id)
+      await this.userRepository.remove(user)
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error
+      }
+      this.logger.error(`Failed to remove user with ID ${id}`, error.stack)
+      throw new InternalServerErrorException('Failed to remove user')
+    }
+  }
+}
+
+// ❌ Yanlış
+@Injectable()
+export class UsersService {
+  async findAll(): Promise<User[]> {
+    return this.userRepository.find()
+  }
+
+  async findOne(id: number): Promise<User> {
+    return this.userRepository.findOne({ where: { id } })
+  }
+}
+```
+
+## 📝 DTO (Data Transfer Object) Kuralları
+
+### DTO Yapısı
+
+```typescript
+// ✅ Doğru
+import { IsString, IsEmail, IsOptional, MinLength, MaxLength } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
+export class CreateUserDto {
+  @ApiProperty({
+    description: 'User email address',
+    example: 'john@example.com'
+  })
+  @IsEmail()
+  email: string
+
+  @ApiProperty({
+    description: 'User password',
+    example: 'password123',
+    minLength: 8
+  })
+  @IsString()
+  @MinLength(8)
+  @MaxLength(100)
+  password: string
+
+  @ApiProperty({
+    description: 'User first name',
+    example: 'John'
+  })
+  @IsString()
+  @MinLength(2)
+  @MaxLength(50)
+  firstName: string
+
+  @ApiPropertyOptional({
+    description: 'User last name',
+    example: 'Doe'
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  lastName?: string
+}
+
+export class UpdateUserDto {
+  @ApiPropertyOptional({
+    description: 'User email address',
+    example: 'john@example.com'
+  })
+  @IsOptional()
+  @IsEmail()
+  email?: string
+
+  @ApiPropertyOptional({
+    description: 'User first name',
+    example: 'John'
+  })
+  @IsOptional()
+  @IsString()
+  @MinLength(2)
+  @MaxLength(50)
+  firstName?: string
+
+  @ApiPropertyOptional({
+    description: 'User last name',
+    example: 'Doe'
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  lastName?: string
+}
+
+// ❌ Yanlış
+export class CreateUserDto {
+  email: string
+  password: string
+  firstName: string
+  lastName?: string
+}
+```
+
+### Response DTO
+
+```typescript
+// ✅ Doğru
+export class UserResponseDto {
+  @ApiProperty()
+  id: number
+
+  @ApiProperty()
+  email: string
+
+  @ApiProperty()
+  firstName: string
+
+  @ApiPropertyOptional()
+  lastName?: string
+
+  @ApiProperty()
+  createdAt: Date
+
+  @ApiProperty()
+  updatedAt: Date
+}
+
+// ❌ Yanlış
+export class UserResponseDto {
+  id: number
+  email: string
+  firstName: string
+  lastName?: string
+}
+```
+
+## 🗄️ Entity Kuralları
+
+### Entity Yapısı
+
+```typescript
+// ✅ Doğru
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+
+@Entity('users')
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number
+
+  @Column({ unique: true })
+  email: string
+
+  @Column()
+  password: string
+
+  @Column()
+  firstName: string
+
+  @Column({ nullable: true })
+  lastName?: string
+
+  @Column({ default: true })
+  isActive: boolean
+
+  @CreateDateColumn()
+  createdAt: Date
+
+  @UpdateDateColumn()
+  updatedAt: Date
+}
+
+// ❌ Yanlış
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number
+
+  @Column()
+  email: string
+
+  @Column()
+  password: string
+}
+```
+
+## 🔐 Authentication & Authorization
+
+### JWT Strategy
+
+```typescript
+// ✅ Doğru
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly usersService: UsersService
+  ) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: configService.get<string>('JWT_SECRET')
+    })
+  }
+
+  async validate(payload: any) {
+    const user = await this.usersService.findOne(payload.sub)
+    if (!user || !user.isActive) {
+      throw new UnauthorizedException()
+    }
+    return user
+  }
+}
+
+// ❌ Yanlış
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor() {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: 'secret'
+    })
+  }
+
+  async validate(payload: any) {
+    return payload
+  }
+}
+```
+
+### Guards
+
+```typescript
+// ✅ Doğru
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {
+  canActivate(context: ExecutionContext) {
+    return super.canActivate(context)
+  }
+
+  handleRequest(err: any, user: any, info: any) {
+    if (err || !user) {
+      throw err || new UnauthorizedException()
+    }
+    return user
+  }
+}
+
+// ❌ Yanlış
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {}
+```
+
+### Role-based Authorization
+
+```typescript
+// ✅ Doğru
+export const ROLES_KEY = 'roles'
+export const Roles = (...roles: string[]) => SetMetadata(ROLES_KEY, roles)
+
+@Injectable()
+export class RolesGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass()
+    ])
+    
+    if (!requiredRoles) {
+      return true
+    }
+    
+    const { user } = context.switchToHttp().getRequest()
+    return requiredRoles.some((role) => user.roles?.includes(role))
+  }
+}
+
+// Kullanım
+@Get('admin')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin')
+async adminOnly() {
+  return { message: 'Admin only' }
+}
+```
+
+## 🛡️ Error Handling
+
+### Global Exception Filter
+
+```typescript
+// ✅ Doğru
+@Catch()
+export class GlobalExceptionFilter implements ExceptionFilter {
+  catch(exception: unknown, host: ExecutionContext) {
+    const ctx = host.switchToHttp()
+    const response = ctx.getResponse<Response>()
+    const request = ctx.getRequest<Request>()
+
+    let status = HttpStatus.INTERNAL_SERVER_ERROR
+    let message = 'Internal server error'
+
+    if (exception instanceof HttpException) {
+      status = exception.getStatus()
+      message = exception.message
+    } else if (exception instanceof Error) {
+      message = exception.message
+    }
+
+    const errorResponse = {
+      statusCode: status,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+      message
+    }
+
+    response.status(status).json(errorResponse)
+  }
+}
+
+// ❌ Yanlış
+@Catch()
+export class GlobalExceptionFilter implements ExceptionFilter {
+  catch(exception: unknown, host: ExecutionContext) {
+    const ctx = host.switchToHttp()
+    const response = ctx.getResponse()
+    response.status(500).json({ error: 'Internal server error' })
+  }
+}
+```
+
+### Custom Exceptions
+
+```typescript
+// ✅ Doğru
+export class UserNotFoundException extends NotFoundException {
+  constructor(userId: number) {
+    super(`User with ID ${userId} not found`)
+  }
+}
+
+export class EmailAlreadyExistsException extends ConflictException {
+  constructor(email: string) {
+    super(`User with email ${email} already exists`)
+  }
+}
+
+// Kullanım
+async findOne(id: number): Promise<User> {
+  const user = await this.userRepository.findOne({ where: { id } })
+  if (!user) {
+    throw new UserNotFoundException(id)
+  }
+  return user
+}
+```
+
+## 📊 Logging
+
+### Logger Service
+
+```typescript
+// ✅ Doğru
+@Injectable()
+export class LoggerService {
+  private readonly logger = new Logger(LoggerService.name)
+
+  log(message: string, context?: string) {
+    this.logger.log(message, context)
+  }
+
+  error(message: string, trace?: string, context?: string) {
+    this.logger.error(message, trace, context)
+  }
+
+  warn(message: string, context?: string) {
+    this.logger.warn(message, context)
+  }
+
+  debug(message: string, context?: string) {
+    this.logger.debug(message, context)
+  }
+}
+
+// ❌ Yanlış
+@Injectable()
+export class LoggerService {
+  log(message: string) {
+    console.log(message)
+  }
+}
+```
+
+## 🧪 Testing
+
+### Unit Tests
+
+```typescript
+// ✅ Doğru
+describe('UsersService', () => {
+  let service: UsersService
+  let repository: Repository<User>
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        UsersService,
+        {
+          provide: getRepositoryToken(User),
+          useClass: Repository
+        }
+      ]
+    }).compile()
+
+    service = module.get<UsersService>(UsersService)
+    repository = module.get<Repository<User>>(getRepositoryToken(User))
+  })
+
+  it('should be defined', () => {
+    expect(service).toBeDefined()
+  })
+
+  describe('findAll', () => {
+    it('should return an array of users', async () => {
+      const result = [{ id: 1, email: 'test@example.com' }]
+      jest.spyOn(repository, 'find').mockResolvedValue(result)
+
+      expect(await service.findAll()).toBe(result)
+    })
+  })
+
+  describe('findOne', () => {
+    it('should return a user', async () => {
+      const result = { id: 1, email: 'test@example.com' }
+      jest.spyOn(repository, 'findOne').mockResolvedValue(result)
+
+      expect(await service.findOne(1)).toBe(result)
+    })
+
+    it('should throw NotFoundException when user not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null)
+
+      await expect(service.findOne(999)).rejects.toThrow(NotFoundException)
+    })
+  })
+})
+
+// ❌ Yanlış
+describe('UsersService', () => {
+  it('should work', () => {
+    expect(true).toBe(true)
+  })
+})
+```
+
+### E2E Tests
+
+```typescript
+// ✅ Doğru
+describe('UsersController (e2e)', () => {
+  let app: INestApplication
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule]
+    }).compile()
+
+    app = moduleFixture.createNestApplication()
+    await app.init()
+  })
+
+  afterAll(async () => {
+    await app.close()
+  })
+
+  it('/users (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/users')
+      .expect(200)
+  })
+
+  it('/users (POST)', () => {
+    return request(app.getHttpServer())
+      .post('/users')
+      .send({
+        email: 'test@example.com',
+        password: 'password123',
+        firstName: 'John'
+      })
+      .expect(201)
+  })
+})
+```
+
+## 🔧 Configuration
+
+### Environment Configuration
+
+```typescript
+// ✅ Doğru
+import { registerAs } from '@nestjs/config'
+
+export default registerAs('database', () => ({
+  type: process.env.DB_TYPE || 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT, 10) || 5432,
+  username: process.env.DB_USERNAME || 'postgres',
+  password: process.env.DB_PASSWORD || 'password',
+  database: process.env.DB_NAME || 'myapp',
+  synchronize: process.env.NODE_ENV !== 'production',
+  logging: process.env.NODE_ENV === 'development'
+}))
+
+// ❌ Yanlış
+export const databaseConfig = {
+  type: 'postgres',
+  host: 'localhost',
+  port: 5432,
+  username: 'postgres',
+  password: 'password',
+  database: 'myapp'
+}
+```
+
+### Validation Schema
+
+```typescript
+// ✅ Doğru
+import * as Joi from 'joi'
+
+export const validationSchema = Joi.object({
+  NODE_ENV: Joi.string()
+    .valid('development', 'production', 'test')
+    .default('development'),
+  PORT: Joi.number().default(3001),
+  DATABASE_HOST: Joi.string().required(),
+  DATABASE_PORT: Joi.number().default(5432),
+  DATABASE_USERNAME: Joi.string().required(),
+  DATABASE_PASSWORD: Joi.string().required(),
+  DATABASE_NAME: Joi.string().required(),
+  JWT_SECRET: Joi.string().required(),
+  JWT_EXPIRES_IN: Joi.string().default('1d')
+})
+
+// ❌ Yanlış
+export const validationSchema = Joi.object({
+  NODE_ENV: Joi.string(),
+  PORT: Joi.number()
+})
+```
+
+## 📊 Performance
+
+### Caching
+
+```typescript
+// ✅ Doğru
+@Injectable()
+export class UsersService {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache
+  ) {}
+
+  async findOne(id: number): Promise<User> {
+    const cacheKey = `user:${id}`
+    let user = await this.cacheManager.get<User>(cacheKey)
+
+    if (!user) {
+      user = await this.userRepository.findOne({ where: { id } })
+      if (user) {
+        await this.cacheManager.set(cacheKey, user, 300) // 5 minutes
+      }
+    }
+
+    return user
+  }
+}
+
+// ❌ Yanlış
+@Injectable()
+export class UsersService {
+  async findOne(id: number): Promise<User> {
+    return this.userRepository.findOne({ where: { id } })
+  }
+}
+```
+
+### Database Optimization
+
+```typescript
+// ✅ Doğru
+async findAll(): Promise<User[]> {
+  return this.userRepository
+    .createQueryBuilder('user')
+    .leftJoinAndSelect('user.profile', 'profile')
+    .where('user.isActive = :isActive', { isActive: true })
+    .orderBy('user.createdAt', 'DESC')
+    .getMany()
+}
+
+// ❌ Yanlış
+async findAll(): Promise<User[]> {
+  return this.userRepository.find()
+}
+```
+
+## 🔒 Security
+
+### Input Validation
+
+```typescript
+// ✅ Doğru
+@Post()
+@UsePipes(new ValidationPipe({
+  transform: true,
+  whitelist: true,
+  forbidNonWhitelisted: true,
+  transformOptions: {
+    enableImplicitConversion: true
+  }
+}))
+async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  return this.usersService.create(createUserDto)
+}
+
+// ❌ Yanlış
+@Post()
+async create(@Body() body: any): Promise<User> {
+  return this.usersService.create(body)
+}
+```
+
+### Rate Limiting
+
+```typescript
+// ✅ Doğru
+@Injectable()
+export class ThrottlerGuard extends ThrottlerGuard {
+  protected getTracker(req: Record<string, any>): string {
+    return req.ips.length ? req.ips[0] : req.ip
+  }
+}
+
+// Kullanım
+@UseGuards(ThrottlerGuard)
+@Throttle(10, 60) // 10 requests per minute
+@Get()
+async findAll(): Promise<User[]> {
+  return this.usersService.findAll()
+}
+```
+
+## 📚 Documentation
+
+### Swagger Documentation
+
+```typescript
+// ✅ Doğru
+@ApiTags('users')
+@Controller('users')
+export class UsersController {
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'List of users',
+    type: [UserResponseDto]
+  })
+  @Get()
+  async findAll(): Promise<User[]> {
+    return this.usersService.findAll()
+  }
+
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'User created successfully',
+    type: UserResponseDto
+  })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'Bad request' 
+  })
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.usersService.create(createUserDto)
+  }
+}
+
+// ❌ Yanlış
+@Controller('users')
+export class UsersController {
+  @Get()
+  async findAll(): Promise<User[]> {
+    return this.usersService.findAll()
+  }
+}
+```
