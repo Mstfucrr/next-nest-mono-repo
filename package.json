@@ -5,16 +5,16 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"pnpm:dev:api\" \"pnpm:dev:web\"",
-    "dev:api": "pnpm --filter api start:dev",
+    "dev": "concurrently \"pnpm:dev:services\" \"pnpm:dev:web\"",
+    "dev:services": "pnpm --filter services start:dev",
     "dev:web": "pnpm --filter web dev",
-    "build:api": "pnpm --filter api build",
+    "build:services": "pnpm --filter services build",
     "build:web": "pnpm --filter web build",
     "format": "prettier --write \"apps/**/*.{js,ts,jsx,tsx,json,css,md}\"",
-    "format:api": "pnpm --filter api format",
+    "format:services": "pnpm --filter services format",
     "format:web": "pnpm --filter web format",
-    "format:check": "pnpm --filter api format:check && pnpm --filter web format:check",
-    "lint": "pnpm --filter api lint && pnpm --filter web lint"
+    "format:check": "pnpm --filter services format:check && pnpm --filter web format:check",
+    "lint": "pnpm --filter services lint && pnpm --filter web lint"
   },
   "keywords": [],
   "author": "",
