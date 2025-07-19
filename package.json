@@ -6,15 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "concurrently \"pnpm:dev:services\" \"pnpm:dev:web\"",
-    "dev:services": "pnpm --filter services start:dev",
+    "dev:services": "node scripts/services.js start:dev",
     "dev:web": "pnpm --filter web dev",
-    "build:services": "pnpm --filter services build",
+    "build:services": "node scripts/services.js build",
     "build:web": "pnpm --filter web build",
     "format": "prettier --write \"apps/**/*.{js,ts,jsx,tsx,json,css,md}\"",
-    "format:services": "pnpm --filter services format",
+    "format:services": "node scripts/services.js format",
     "format:web": "pnpm --filter web format",
-    "format:check": "pnpm --filter services format:check && pnpm --filter web format:check",
-    "lint": "pnpm --filter services lint && pnpm --filter web lint"
+    "format:check": "node scripts/services.js format:check --include-web",
+    "lint": "node scripts/services.js lint --include-web"
   },
   "keywords": [],
   "author": "",
