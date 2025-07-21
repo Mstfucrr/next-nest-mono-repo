@@ -2,37 +2,40 @@ import { Injectable } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'
-import crypto from 'node:crypto'
+import { PrismaService } from '../prisma/prisma.service'
 
 @Injectable()
 export class UsersService {
-  private users: User[] = []
+  constructor(private readonly prisma: PrismaService) {}
 
-  create(dto: CreateUserDto): User {
-    const user: User = { id: crypto.randomUUID(), ...dto }
-    this.users.push(user)
+  async create(dto: CreateUserDto): Promise<User> {
+    const user = await this.prisma.user.create({
+      data: dto
+    })
     return user
   }
 
-  findAll(): User[] {
-    return this.users
+  async findAll(): Promise<User[]> {
+    return await this.prisma.user.findMany()
   }
 
-  findOne(id: string): User | undefined {
-    return this.users.find(user => user.id === id)
+  async findOne(id: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { id }
+    })
   }
 
-  update(id: string, dto: UpdateUserDto): User | undefined {
-    const user = this.findOne(id)
-    if (!user) return undefined
-    Object.assign(user, dto)
-    return user
+  async update(id: string, dto: UpdateUserDto): Promise<User | null> {
+    return this.prisma.user.update({
+      where: { id },
+      data: dto
+    })
   }
 
-  remove(id: string): boolean {
-    const index = this.users.findIndex(user => user.id === id)
-    if (index === -1) return false
-    this.users.splice(index, 1)
-    return true
+  async remove(id: string): Promise<boolean> {
+    const result = await this.prisma.user.delete({
+      where: { id }
+    })
+    return result !== null
   }
 }
