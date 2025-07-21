@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:services": "node scripts/services.js test",
+    "test:web": "pnpm --filter web test",
+    "test:all": "concurrently \"pnpm:test:services\" \"pnpm:test:web\"",
     "dev": "concurrently \"pnpm:dev:services\" \"pnpm:dev:web\"",
     "dev:services": "node scripts/services.js start:dev",
     "dev:web": "pnpm --filter web dev",
