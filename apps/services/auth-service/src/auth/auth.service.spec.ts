@@ -52,32 +52,32 @@ describe('AuthService', () => {
     expect(result.auth).not.toHaveProperty('password')
   })
 
-  it('should login and return access token', async () => {
+  it('should login and return access token', () => {
     const dto: LoginDto = {
       email: 'test@example.com',
       password: 'password123'
     }
 
     const signSpy = jest.spyOn(jwtService, 'sign')
-    const result = await service.login(dto)
+    const result = service.login(dto)
 
     expect(signSpy).toHaveBeenCalledWith({ sub: 'dummy-user-id', email: dto.email })
     expect(result).toEqual({ access_token: 'mocked-jwt-token' })
   })
 
-  it('should validate valid token', async () => {
+  it('should validate valid token', () => {
     const verifySpy = jest.spyOn(jwtService, 'verify')
-    const result = await service.validateToken('valid.token')
+    const result = service.validateToken('valid.token')
     expect(verifySpy).toHaveBeenCalledWith('valid.token')
     expect(result).toHaveProperty('email', 'test@example.com')
   })
 
-  it('should return null on invalid token', async () => {
+  it('should return null on invalid token', () => {
     jest.spyOn(jwtService, 'verify').mockImplementationOnce(() => {
       throw new Error('invalid token')
     })
 
-    const result = await service.validateToken('invalid.token')
+    const result = service.validateToken('invalid.token')
     expect(result).toBeNull()
   })
 })

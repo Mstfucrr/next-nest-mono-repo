@@ -27,13 +27,13 @@ export class AuthService {
     }
   }
 
-  async login(dto: LoginDto): Promise<{ access_token: string }> {
+  login(dto: LoginDto): { access_token: string } {
     const payload = { sub: 'dummy-user-id', email: dto.email }
     const token = this.jwtService.sign(payload)
     return { access_token: token }
   }
 
-  async validateToken(token: string): Promise<Record<string, unknown> | null> {
+  validateToken(token: string): Record<string, unknown> | null {
     try {
       return this.jwtService.verify(token) as Record<string, unknown> | null
     } catch {
