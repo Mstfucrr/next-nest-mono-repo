@@ -8,7 +8,8 @@ const { execSync } = require('child_process')
  */
 function getServices() {
   const servicesDir = path.join(__dirname, '..', 'apps', 'services')
-  return fs.readdirSync(servicesDir, { withFileTypes: true })
+  return fs
+    .readdirSync(servicesDir, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory())
     .map(dirent => dirent.name)
 }
@@ -20,17 +21,44 @@ function getServices() {
  */
 function runServicesCommand(command, includeWeb = false) {
   const services = getServices()
-  const commands = services.map(service => `pnpm --filter ${service} ${command}`)
-  
-  if (includeWeb) {
-    commands.push(`pnpm --filter web ${command}`)
-  }
-  
-  try {
-    execSync(commands.join(' && '), { stdio: 'inherit' })
-  } catch (error) {
-    console.error(`Error running ${command}:`, error.message)
-    process.exit(1)
+
+  // start:dev komutu için concurrently kullan
+  if (command === 'start:dev') {
+    const serviceCommands = services.map(service => `"pnpm --filter ${service} start:dev"`)
+    const allCommands = serviceCommands.join(' ')
+
+    if (includeWeb) {
+      allCommands += ` "pnpm --filter web dev"`
+    }
+
+    // Servis isimlerini büyük harfle göster
+    const serviceNames = services.map(service => service.toUpperCase())
+    if (includeWeb) {
+      serviceNames.push('WEB')
+    }
+
+    const concurrentlyCommand = `concurrently -n ${serviceNames.join(',')} -c blue,green,yellow,red,cyan,magenta ${allCommands}`
+
+    try {
+      execSync(concurrentlyCommand, { stdio: 'inherit' })
+    } catch (error) {
+      console.error(`Error running ${command}:`, error.message)
+      process.exit(1)
+    }
+  } else {
+    // Diğer komutlar için sıralı çalıştır
+    const commands = services.map(service => `pnpm --filter ${service} ${command}`)
+
+    if (includeWeb) {
+      commands.push(`pnpm --filter web ${command}`)
+    }
+
+    try {
+      execSync(commands.join(' && '), { stdio: 'inherit' })
+    } catch (error) {
+      console.error(`Error running ${command}:`, error.message)
+      process.exit(1)
+    }
   }
 }
 
