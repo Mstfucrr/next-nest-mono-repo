@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { UsersService } from './user.service'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'
+import { UsersService } from './user.service'
 
 describe('UsersService', () => {
   let service: UsersService
@@ -11,7 +11,9 @@ describe('UsersService', () => {
   const mockUser: User = {
     id: '1',
     email: 'test@example.com',
-    fullName: 'Test User'
+    fullName: 'Test User',
+    createdAt: new Date(),
+    updatedAt: new Date()
   }
 
   const mockCreateUserDto: CreateUserDto = {
