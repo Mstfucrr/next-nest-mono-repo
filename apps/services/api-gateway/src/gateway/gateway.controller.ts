@@ -25,7 +25,9 @@ export class GatewayController {
 
   @Get('validate')
   @ApiOperation({ summary: 'Token doğrula' })
-  validate(@Query('token') token: string) {
-    return this.gw.validateToken(token)
+  async validate(@Query('token') token: string) {
+    const result = await this.gw.validateToken(token)
+    console.log('Validate result:', result)
+    return result
   }
 }
