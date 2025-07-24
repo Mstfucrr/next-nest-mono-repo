@@ -1,14 +1,15 @@
+// src/app.module.ts
 import { Module } from '@nestjs/common'
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
-import { AuthController } from './auth/auth.controller'
-import { AuthModule } from './auth/auth.module'
-import { UserController } from './user/user.controller'
-import { UserModule } from './user/user.module'
+import { ConfigModule } from '@nestjs/config'
+import { GatewayModule } from './gateway/gateway.module'
 
 @Module({
-  imports: [AuthModule, UserModule],
-  controllers: [AppController, AuthController, UserController],
-  providers: [AppService]
+  imports: [
+    // .env dosyasını yükler ve ConfigService’i global olarak kullanılabilir kılar
+    ConfigModule.forRoot({ isGlobal: true }),
+
+    // GatewayModule: HTTP endpoint’leri ve microservice client proxy’lerini içerir
+    GatewayModule
+  ]
 })
 export class AppModule {}
