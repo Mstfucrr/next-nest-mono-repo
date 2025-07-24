@@ -1,16 +1,18 @@
 import { Controller } from '@nestjs/common'
 import { MessagePattern, Payload } from '@nestjs/microservices'
-import { UsersService } from './user.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
+import { UsersService } from './user.service'
 
 @Controller()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @MessagePattern({ cmd: 'user-create' })
-  create(@Payload() dto: CreateUserDto) {
-    return this.usersService.create(dto)
+  async create(@Payload() dto: CreateUserDto) {
+    console.log('User create request received:', dto)
+    const user = await this.usersService.create(dto)
+    return { message: 'user-service: user successfully created', user }
   }
 
   @MessagePattern({ cmd: 'user-find-all' })
