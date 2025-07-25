@@ -1,3 +1,4 @@
+import { AuthResult } from '@dailyshop/shared-types'
 import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
@@ -9,7 +10,7 @@ import { Auth } from './entities/auth.entity'
 export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
-  async register(dto: RegisterDto): Promise<{ message: string; auth: Omit<Auth, 'password'> }> {
+  async register(dto: RegisterDto): Promise<AuthResult> {
     const hashedPassword = await bcrypt.hash(dto.password, 10)
 
     const user: Auth = {

@@ -23,12 +23,17 @@ function runServicesCommand(command, includeWeb = false) {
   const services = getServices()
 
   // start:dev komutu için concurrently kullan
+  console.log('command', command)
   if (command === 'start:dev') {
-    const serviceCommands = services.map(service => `"pnpm --filter ${service} start:dev"`)
+    const serviceCommands = services.map(service => {
+      const servicePath = path.join(__dirname, '..', 'apps', 'services', service)
+      return `"cd ${servicePath} && pnpm start:dev"`
+    })
     const allCommands = serviceCommands.join(' ')
 
     if (includeWeb) {
-      allCommands += ` "pnpm --filter web dev"`
+      const webPath = path.join(__dirname, '..', 'apps', 'web')
+      allCommands += ` "cd ${webPath} && pnpm dev"`
     }
 
     // Servis isimlerini büyük harfle göster
@@ -37,7 +42,7 @@ function runServicesCommand(command, includeWeb = false) {
       serviceNames.push('WEB')
     }
 
-    const concurrentlyCommand = `concurrently -n ${serviceNames.join(',')} -c blue,green,yellow,red,cyan,magenta ${allCommands}`
+    const concurrentlyCommand = `npx concurrently -n ${serviceNames.join(',')} -c blue,green,yellow,red,cyan,magenta ${allCommands}`
 
     try {
       execSync(concurrentlyCommand, { stdio: 'inherit' })
@@ -47,14 +52,22 @@ function runServicesCommand(command, includeWeb = false) {
     }
   } else {
     // Diğer komutlar için sıralı çalıştır
-    const commands = services.map(service => `pnpm --filter ${service} ${command}`)
+    const commands = services.map(service => {
+      const servicePath = path.join(__dirname, '..', 'apps', 'services', service)
+      return `cd ${servicePath} && pnpm ${command}`
+    })
 
     if (includeWeb) {
-      commands.push(`pnpm --filter web ${command}`)
+      const webPath = path.join(__dirname, '..', 'apps', 'web')
+      commands.push(`cd ${webPath} && pnpm ${command}`)
     }
 
     try {
-      execSync(commands.join(' && '), { stdio: 'inherit' })
+      // Her komutu ayrı ayrı çalıştır ve hata durumunda dur
+      for (const cmd of commands) {
+        console.log(`Running: ${cmd}`)
+        execSync(cmd, { stdio: 'inherit' })
+      }
     } catch (error) {
       console.error(`Error running ${command}:`, error.message)
       process.exit(1)
