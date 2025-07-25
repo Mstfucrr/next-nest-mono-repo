@@ -2,6 +2,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ClientsModule, Transport } from '@nestjs/microservices'
+import { AppLogger } from '@dailyshop/shared-utils'
 import { GatewayController } from './gateway.controller'
 import { GatewayService } from './gateway.service'
 
@@ -36,6 +37,6 @@ import { GatewayService } from './gateway.service'
     ])
   ],
   controllers: [GatewayController],
-  providers: [GatewayService]
+  providers: [GatewayService, AppLogger]
 })
 export class GatewayModule {}
