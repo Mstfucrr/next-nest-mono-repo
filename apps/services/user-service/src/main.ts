@@ -1,7 +1,7 @@
+import { AppLogger } from '@dailyshop/shared-utils'
 import { NestFactory } from '@nestjs/core'
 import { MicroserviceOptions, Transport } from '@nestjs/microservices'
 import { AppModule } from './app.module'
-import { AppLogger } from '@dailyshop/shared-utils'
 
 const microserviceOptions: MicroserviceOptions = {
   transport: Transport.TCP,
@@ -12,7 +12,8 @@ const microserviceOptions: MicroserviceOptions = {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, microserviceOptions, {
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+    ...microserviceOptions,
     bufferLogs: true
   })
   app.useLogger(app.get(AppLogger))
