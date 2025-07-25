@@ -1,15 +1,15 @@
 // src/main.ts
+import { AppLogger } from '@dailyshop/shared-utils'
 import { ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
-import { AppLogger } from '@dailyshop/shared-utils'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true })
-  app.useLogger(app.get(AppLogger))
-  const logger = app.get(AppLogger)
+  const logger = await app.resolve(AppLogger)
+  app.useLogger(logger)
 
   // Global ValidationPipe: gelen tüm isteklere DTO validasyonu uygular
   app.useGlobalPipes(

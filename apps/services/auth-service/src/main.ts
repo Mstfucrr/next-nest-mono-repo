@@ -16,8 +16,8 @@ async function bootstrap() {
     ...microserviceOptions,
     bufferLogs: true
   })
-  app.useLogger(app.get(AppLogger))
-  const logger = app.get(AppLogger)
+  const logger = await app.resolve(AppLogger)
+  app.useLogger(logger)
   logger.log('Auth service is running on port 4001')
   await app.listen()
 }
