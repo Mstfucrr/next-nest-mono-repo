@@ -23,7 +23,7 @@ export class AuthService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _password, ...safeUser } = user
     return {
-      message: 'User registered',
+      message: 'Auth created',
       auth: safeUser
     }
   }
@@ -34,9 +34,9 @@ export class AuthService {
     return { access_token: token }
   }
 
-  validateToken(token: string): Record<string, unknown> | null {
+  validateToken(token: string) {
     try {
-      return this.jwtService.verify(token) as Record<string, unknown> | null
+      return this.jwtService.verify<{ sub: string; email: string }>(token)
     } catch {
       return null
     }

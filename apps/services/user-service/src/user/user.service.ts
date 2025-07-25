@@ -1,31 +1,29 @@
+import { CreateUserPayload, UpdateUserPayload, UserEntity, UserResult } from '@dailyshop/shared-types'
 import { Injectable } from '@nestjs/common'
-import { CreateUserDto } from './dto/create-user.dto'
-import { UpdateUserDto } from './dto/update-user.dto'
-import { User } from './entities/user.entity'
 import { PrismaService } from '../prisma/prisma.service'
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateUserDto): Promise<User> {
+  async create(dto: CreateUserPayload): Promise<UserResult> {
     const user = await this.prisma.user.create({
       data: dto
     })
-    return user
+    return { message: 'User created', user }
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserEntity[]> {
     return await this.prisma.user.findMany()
   }
 
-  async findOne(id: string): Promise<User | null> {
+  async findOne(id: string): Promise<UserEntity | null> {
     return this.prisma.user.findUnique({
       where: { id }
     })
   }
 
-  async update(id: string, dto: UpdateUserDto): Promise<User | null> {
+  async update(id: string, dto: UpdateUserPayload): Promise<UserEntity | null> {
     return this.prisma.user.update({
       where: { id },
       data: dto

@@ -1,4 +1,5 @@
 // src/gateway/gateway.service.ts
+import { AuthResult, UserResult } from '@dailyshop/shared-types'
 import { Inject, Injectable } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
 import { firstValueFrom } from 'rxjs'
@@ -15,15 +16,9 @@ export class GatewayService {
   // Yeni kullanıcı kaydı: önce auth, sonra user servisine event emit
   async register(dto: RegisterHttpDto) {
     // auth servisinde kayıt
-    const authResult = await firstValueFrom<{ message: string; auth: { id: string; fullName: string; email: string } }>(
-      this.authClient.send({ cmd: 'auth-register' }, dto)
-    )
-    console.log('Auth result:', authResult)
+    const authResult = await firstValueFrom<AuthResult>(this.authClient.send({ cmd: 'auth-register' }, dto))
     // user servisinde profil oluştur
-    const userResult = await firstValueFrom<{
-      message: string
-      user: { id: string; email: string; fullName: string; createdAt: Date; updatedAt: Date }
-    }>(
+    const userResult = await firstValueFrom<UserResult>(
       this.userClient.send(
         { cmd: 'user-create' },
         {
@@ -32,9 +27,8 @@ export class GatewayService {
         }
       )
     )
-    console.log('User result:', userResult)
-    console.log('Gateway: User created')
-    return authResult
+
+    return userResult
   }
 
   // Giriş isteği: auth servisine yönlendir
