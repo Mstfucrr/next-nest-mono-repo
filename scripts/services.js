@@ -27,7 +27,8 @@ function runServicesCommand(command, includeWeb = false) {
   if (command === 'start:dev') {
     const serviceCommands = services.map(service => {
       const servicePath = path.join(__dirname, '..', 'apps', 'services', service)
-      return `"cd ${servicePath} && pnpm start:dev"`
+      // Tüm servisler için ts-node kullan
+      return `"cd ${servicePath} && npx ts-node src/main.ts"`
     })
     const allCommands = serviceCommands.join(' ')
 

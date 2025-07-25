@@ -32,3 +32,13 @@ export interface LoginPayload {
   email: string
   password: string
 }
+
+/**
+ * ValidateToken’ın döneceği model
+ */
+export interface ValidateTokenResult {
+  sub: string
+  email: string
+  iat: number
+  exp: number
+}

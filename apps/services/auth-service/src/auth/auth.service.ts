@@ -1,4 +1,4 @@
-import { AuthResult } from '@dailyshop/shared-types'
+import { AuthResult, ValidateTokenResult } from '@dailyshop/shared-types'
 import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
@@ -34,9 +34,9 @@ export class AuthService {
     return { access_token: token }
   }
 
-  validateToken(token: string) {
+  validateToken(token: string): ValidateTokenResult | null {
     try {
-      return this.jwtService.verify<{ sub: string; email: string }>(token)
+      return this.jwtService.verify<ValidateTokenResult>(token)
     } catch {
       return null
     }

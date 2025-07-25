@@ -1,5 +1,5 @@
 // src/gateway/gateway.service.ts
-import { AuthResult, UserResult } from '@dailyshop/shared-types'
+import { AuthResult, UserResult, ValidateTokenResult } from '@dailyshop/shared-types'
 import { Inject, Injectable } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
 import { firstValueFrom } from 'rxjs'
@@ -38,6 +38,6 @@ export class GatewayService {
 
   // Token doğrulama: auth servisine yönlendir
   async validateToken(token: string) {
-    return await firstValueFrom<{ isValid: boolean }>(this.authClient.send({ cmd: 'auth-validate-token' }, token))
+    return await firstValueFrom<ValidateTokenResult | null>(this.authClient.send({ cmd: 'auth-validate-token' }, token))
   }
 }
