@@ -18,9 +18,7 @@ export class GatewayService {
   // Yeni kullanıcı kaydı: önce auth, sonra user servisine event emit
   async register(dto: RegisterHttpDto) {
     this.logger.log(`Register payload: ${JSON.stringify(dto)}`)
-    const authResult = await firstValueFrom<AuthResult>(
-      this.authClient.send({ cmd: 'auth-register' }, dto)
-    )
+    const authResult = await firstValueFrom<AuthResult>(this.authClient.send({ cmd: 'auth-register' }, dto))
     this.logger.log(`Auth service result: ${JSON.stringify(authResult)}`)
     // user servisinde profil oluştur
     const userResult = await firstValueFrom<UserResult>(
@@ -39,9 +37,7 @@ export class GatewayService {
   // Giriş isteği: auth servisine yönlendir
   async login(dto: LoginHttpDto) {
     this.logger.log(`Login attempt for ${dto.email}`)
-    const result = await firstValueFrom<{ token: string }>(
-      this.authClient.send({ cmd: 'auth-login' }, dto)
-    )
+    const result = await firstValueFrom<{ token: string }>(this.authClient.send({ cmd: 'auth-login' }, dto))
     this.logger.log('Login token issued')
     return result
   }

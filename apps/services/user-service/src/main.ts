@@ -12,11 +12,9 @@ const microserviceOptions: MicroserviceOptions = {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
-    microserviceOptions,
-    { bufferLogs: true }
-  )
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, microserviceOptions, {
+    bufferLogs: true
+  })
   app.useLogger(app.get(AppLogger))
   const logger = app.get(AppLogger)
   logger.log('User service is running on port 4002')
