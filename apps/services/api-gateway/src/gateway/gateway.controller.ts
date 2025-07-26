@@ -4,11 +4,15 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { LoginHttpDto } from './dto/login-http.dto'
 import { RegisterHttpDto } from './dto/register-http.dto'
 import { GatewayService } from './gateway.service'
+import { AppLogger } from '@dailyshop/shared-utils'
 
 @ApiTags('Auth') // Swagger’da grup başlığı
 @Controller('auth') // /auth taban route’u
 export class GatewayController {
-  constructor(private readonly gw: GatewayService) {}
+  constructor(
+    private readonly gw: GatewayService,
+    private readonly logger: AppLogger
+  ) {}
 
   @Post('register')
   @ApiOperation({ summary: 'Yeni kullanıcı kaydı' })
@@ -27,7 +31,7 @@ export class GatewayController {
   @ApiOperation({ summary: 'Token doğrula' })
   async validate(@Query('token') token: string) {
     const result = await this.gw.validateToken(token)
-    console.log('Validate result:', result)
+    this.logger.log(`Validate result: ${JSON.stringify(result)}`)
     return result
   }
 }

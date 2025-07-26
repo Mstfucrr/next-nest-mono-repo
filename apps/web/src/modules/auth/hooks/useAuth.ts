@@ -1,9 +1,9 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { useAuthStore } from '../store/auth.store'
-import { authService } from '../services/auth.service'
 import { useEffect } from 'react'
+import { authService } from '../services/auth.service'
+import { useAuthStore } from '../store/auth.store'
 
 export const useAuth = () => {
   const { user, setUser } = useAuthStore()

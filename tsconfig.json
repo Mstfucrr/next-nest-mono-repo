@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    /* Hedef JavaScript sürümü */
+    "target": "ES2021",
+    /* Modül sistemi (Backend için CommonJS, frontend build araçları ESNext’e çevirir) */
+    "module": "CommonJS",
+    /* Decorator’ları ve metadata’yı destekle */
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    /* Tip güvenliği ve dosya kontrolü */
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    /* Node modüllerini çözümleme özellikleri */
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    /* Çıktı ve kök dizin ayarları */
+    "rootDir": ".",
+    "outDir": "dist",
+    /* Source map’ler */
+    "sourceMap": true,
+    /* Proje içi alias’lar */
+    "baseUrl": ".",
+    "paths": {
+      "@dailyshop/shared-types": ["libs/shared-types/src/index.ts"],
+      "@dailyshop/shared-utils": ["libs/shared-utils/src/index.ts"]
+    }
+  },
+  /* Hangi dosya ve klasörlerin derlemeye dahil edileceği */
+  "include": ["apps/**/*", "libs/**/*"],
+  /* Burada belirtilenler derleme dışı kalır */
+  "exclude": ["node_modules", "dist"]
+}

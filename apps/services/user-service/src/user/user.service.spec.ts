@@ -1,9 +1,19 @@
+import { AppLogger } from '@dailyshop/shared-utils'
 import { Test, TestingModule } from '@nestjs/testing'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'
 import { UsersService } from './user.service'
+
+// Mock the shared-utils module
+jest.mock('@dailyshop/shared-utils', () => ({
+  AppLogger: jest.fn().mockImplementation(() => ({
+    log: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn()
+  }))
+}))
 
 describe('UsersService', () => {
   let service: UsersService
@@ -43,6 +53,14 @@ describe('UsersService', () => {
         {
           provide: PrismaService,
           useValue: mockPrismaService
+        },
+        {
+          provide: AppLogger,
+          useValue: {
+            log: jest.fn(),
+            warn: jest.fn(),
+            error: jest.fn()
+          }
         }
       ]
     }).compile()
@@ -67,7 +85,7 @@ describe('UsersService', () => {
       expect(mockPrismaService.user.create).toHaveBeenCalledWith({
         data: mockCreateUserDto
       })
-      expect(result).toEqual(mockUser)
+      expect(result).toEqual({ message: 'User created', user: mockUser })
     })
 
     it('should throw an error when user creation fails', async () => {

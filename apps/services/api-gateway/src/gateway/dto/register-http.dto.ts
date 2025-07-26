@@ -5,14 +5,14 @@ import { IsEmail, IsString, MinLength } from 'class-validator'
 export class RegisterHttpDto {
   @ApiProperty({ example: 'user@example.com' })
   @IsEmail()
-  email: string
+  email!: string
 
   @ApiProperty({ minLength: 6 })
   @IsString()
   @MinLength(6)
-  password: string
+  password!: string
 
   @ApiProperty({ example: 'Ahmet Yılmaz' })
   @IsString()
-  fullName: string
+  fullName!: string
 }

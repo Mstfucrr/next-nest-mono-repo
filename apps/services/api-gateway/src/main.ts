@@ -1,4 +1,5 @@
 // src/main.ts
+import { AppLogger } from '@dailyshop/shared-utils'
 import { ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
@@ -6,7 +7,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule, { bufferLogs: true })
+  const logger = await app.resolve(AppLogger)
+  app.useLogger(logger)
 
   // Global ValidationPipe: gelen tüm isteklere DTO validasyonu uygular
   app.useGlobalPipes(
@@ -26,8 +29,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config)
   SwaggerModule.setup('api', app, document) // http://localhost:4000/api
 
-  console.log('API Gateway is running on port 4000')
-  console.log('You can access the API Gateway at http://localhost:4000/api')
+  logger.log('API Gateway is running on port 4000')
+  logger.log('You can access the API Gateway at http://localhost:4000/api')
 
   // ConfigService: .env dosyasındaki değerlere erişim
   const configService = app.get(ConfigService)

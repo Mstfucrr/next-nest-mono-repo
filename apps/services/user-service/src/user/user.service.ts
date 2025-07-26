@@ -1,31 +1,38 @@
+import { CreateUserPayload, UserEntity, UserResult } from '@dailyshop/shared-types'
+import { AppLogger } from '@dailyshop/shared-utils'
 import { Injectable } from '@nestjs/common'
-import { CreateUserDto } from './dto/create-user.dto'
-import { UpdateUserDto } from './dto/update-user.dto'
-import { User } from './entities/user.entity'
 import { PrismaService } from '../prisma/prisma.service'
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly logger: AppLogger
+  ) {}
 
-  async create(dto: CreateUserDto): Promise<User> {
+  async create(dto: CreateUserPayload): Promise<UserResult> {
+    this.logger.log(`Create user payload: ${JSON.stringify(dto)}`)
     const user = await this.prisma.user.create({
       data: dto
     })
-    return user
+    this.logger.log(`User created with id: ${user.id}`)
+    return { message: 'User created', user }
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<UserEntity[]> {
+    this.logger.log('Fetching all users')
     return await this.prisma.user.findMany()
   }
 
-  async findOne(id: string): Promise<User | null> {
+  async findOne(id: string): Promise<UserEntity | null> {
+    this.logger.log(`Fetching user ${id}`)
     return this.prisma.user.findUnique({
       where: { id }
     })
   }
 
-  async update(id: string, dto: UpdateUserDto): Promise<User | null> {
+  async update(id: string, dto: { email?: string; fullName?: string }): Promise<UserEntity | null> {
+    this.logger.log(`Updating user ${id}`)
     return this.prisma.user.update({
       where: { id },
       data: dto
@@ -33,9 +40,11 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<boolean> {
+    this.logger.log(`Removing user ${id}`)
     const result = await this.prisma.user.delete({
       where: { id }
     })
+    this.logger.log(`Removed user ${id}`)
     return result !== null
   }
 }

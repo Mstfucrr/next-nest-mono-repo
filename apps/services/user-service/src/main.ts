@@ -1,3 +1,4 @@
+import { AppLogger } from '@dailyshop/shared-utils'
 import { NestFactory } from '@nestjs/core'
 import { MicroserviceOptions, Transport } from '@nestjs/microservices'
 import { AppModule } from './app.module'
@@ -11,8 +12,13 @@ const microserviceOptions: MicroserviceOptions = {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, microserviceOptions)
-  console.log('User service is running on port 4002')
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+    ...microserviceOptions,
+    bufferLogs: true
+  })
+  const logger = await app.resolve(AppLogger)
+  app.useLogger(logger)
+  logger.log('User service is running on port 4002')
   await app.listen()
 }
 

@@ -1,10 +1,25 @@
 // src/auth/auth.service.spec.ts
-import { Test, TestingModule } from '@nestjs/testing'
-import { AuthService } from './auth.service'
+import { AppLogger } from '@dailyshop/shared-utils'
 import { JwtService } from '@nestjs/jwt'
+import { Test, TestingModule } from '@nestjs/testing'
 import * as bcrypt from 'bcrypt'
-import { RegisterDto } from './dto/register.dto'
+import { AuthService } from './auth.service'
 import { LoginDto } from './dto/login.dto'
+import { RegisterDto } from './dto/register.dto'
+
+// Mock the shared-utils module
+jest.mock('@dailyshop/shared-utils', () => ({
+  AppLogger: jest.fn().mockImplementation(() => ({
+    log: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn()
+  }))
+}))
+
+// Mock bcrypt module
+jest.mock('bcrypt', () => ({
+  hash: jest.fn().mockResolvedValue('hashed-password')
+}))
 
 describe('AuthService', () => {
   let service: AuthService
@@ -19,6 +34,14 @@ describe('AuthService', () => {
           useValue: {
             sign: jest.fn().mockReturnValue('mocked-jwt-token'),
             verify: jest.fn().mockReturnValue({ sub: 'user-id', email: 'test@example.com' })
+          }
+        },
+        {
+          provide: AppLogger,
+          useValue: {
+            log: jest.fn(),
+            warn: jest.fn(),
+            error: jest.fn()
           }
         }
       ]
@@ -39,13 +62,11 @@ describe('AuthService', () => {
       fullName: 'Test User'
     }
 
-    const hashSpy = jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashed-password' as never)
-
     const result = await service.register(dto)
 
-    expect(hashSpy).toHaveBeenCalledWith(dto.password, 10)
+    expect(bcrypt.hash).toHaveBeenCalledWith(dto.password, 10)
 
-    expect(result.message).toBe('User registered')
+    expect(result.message).toBe('Auth created')
 
     expect(result.auth.email).toBe(dto.email)
     expect(result.auth.fullName).toBe(dto.fullName)
