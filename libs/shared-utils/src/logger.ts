@@ -20,36 +20,36 @@ export class AppLogger extends Logger implements LoggerService {
   /**
    * Bilgilendirme (info) mesajı
    */
-  log(message: string, context?: string) {
-    super.log(message, context)
+  log(message: string) {
+    super.log(message)
   }
 
   /**
    * Uyarı (warn) mesajı
    */
-  warn(message: string, context?: string) {
-    super.warn(message, context)
+  warn(message: string) {
+    super.warn(message)
   }
 
   /**
    * Hata (error) mesajı
    * @param trace - stack trace bilgisi
    */
-  error(message: string, trace?: string, context?: string) {
-    super.error(message, trace, context)
+  error(message: string, trace?: string) {
+    super.error(message, trace)
   }
 
   /**
    * Debug mesajı (geliştirme aşamasında)
    */
-  debug(message: string, context?: string) {
-    super.debug(message, context)
+  debug(message: string) {
+    super.debug(message)
   }
 
   /**
    * Verbose seviyesi detaylı log
    */
-  verbose(message: string, context?: string) {
-    super.verbose(message, context)
+  verbose(message: string) {
+    super.verbose(message)
   }
 }
