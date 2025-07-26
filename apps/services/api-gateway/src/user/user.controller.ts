@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { UserService } from './user.service'
 import { CreateUserHttpDto } from './dto/create-user-http.dto'
 import { UpdateUserHttpDto } from './dto/update-user-http.dto'
+import { UserService } from './user.service'
 
 @ApiTags('Users')
 @Controller('users')
@@ -30,7 +30,7 @@ export class UserController {
   @Patch(':id')
   @ApiOperation({ summary: 'Kullanıcı bilgisini güncelle' })
   update(@Param('id') id: string, @Body() dto: UpdateUserHttpDto) {
-    return this.service.update(id, { id, ...dto })
+    return this.service.update(id, dto)
   }
 
   @Delete(':id')

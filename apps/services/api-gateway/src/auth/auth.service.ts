@@ -16,15 +16,10 @@ export class AuthService {
 
   async register(dto: RegisterHttpDto) {
     this.logger.log(`Register payload: ${JSON.stringify(dto)}`)
-    const authResult = await firstValueFrom<AuthResult>(
-      this.authClient.send({ cmd: 'auth-register' }, dto)
-    )
+    const authResult = await firstValueFrom<AuthResult>(this.authClient.send({ cmd: 'auth-register' }, dto))
     this.logger.log(`Auth service result: ${JSON.stringify(authResult)}`)
     const userResult = await firstValueFrom<UserResult>(
-      this.userClient.send(
-        { cmd: 'user-create' },
-        { email: authResult.auth.email, fullName: authResult.auth.fullName }
-      )
+      this.userClient.send({ cmd: 'user-create' }, { email: authResult.auth.email, fullName: authResult.auth.fullName })
     )
     this.logger.log(`User service result: ${JSON.stringify(userResult)}`)
     return userResult
@@ -32,9 +27,7 @@ export class AuthService {
 
   async login(dto: LoginHttpDto) {
     this.logger.log(`Login attempt for ${dto.email}`)
-    const result = await firstValueFrom<{ token: string }>(
-      this.authClient.send({ cmd: 'auth-login' }, dto)
-    )
+    const result = await firstValueFrom<{ token: string }>(this.authClient.send({ cmd: 'auth-login' }, dto))
     this.logger.log('Login token issued')
     return result
   }

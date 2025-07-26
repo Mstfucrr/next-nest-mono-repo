@@ -8,7 +8,10 @@ import { AppLogger } from '@dailyshop/shared-utils'
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly service: AuthService, private readonly logger: AppLogger) {}
+  constructor(
+    private readonly service: AuthService,
+    private readonly logger: AppLogger
+  ) {}
 
   @Post('register')
   @ApiOperation({ summary: 'Yeni kullanıcı oluştur ve giriş için kayıt ol' })

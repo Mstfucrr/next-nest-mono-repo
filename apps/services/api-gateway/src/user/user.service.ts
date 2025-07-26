@@ -28,9 +28,7 @@ export class UserService {
 
   async update(id: string, dto: UpdateUserPayload) {
     this.logger.log(`Updating user ${id}`)
-    return firstValueFrom<UserEntity | null>(
-      this.userClient.send({ cmd: 'user-update' }, { id, data: dto })
-    )
+    return firstValueFrom<UserEntity | null>(this.userClient.send({ cmd: 'user-update' }, { id, data: dto }))
   }
 
   async remove(id: string) {
