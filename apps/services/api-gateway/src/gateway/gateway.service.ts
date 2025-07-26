@@ -1,8 +1,8 @@
 // src/gateway/gateway.service.ts
 import { AuthResult, UserResult, ValidateTokenResult } from '@dailyshop/shared-types'
+import { AppLogger } from '@dailyshop/shared-utils'
 import { Inject, Injectable } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
-import { AppLogger } from '@dailyshop/shared-utils'
 import { firstValueFrom } from 'rxjs'
 import { LoginHttpDto } from './dto/login-http.dto'
 import { RegisterHttpDto } from './dto/register-http.dto'

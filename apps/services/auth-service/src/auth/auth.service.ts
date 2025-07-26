@@ -1,6 +1,6 @@
 import { AuthResult, ValidateTokenResult } from '@dailyshop/shared-types'
-import { Injectable } from '@nestjs/common'
 import { AppLogger } from '@dailyshop/shared-utils'
+import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import * as crypto from 'crypto'
