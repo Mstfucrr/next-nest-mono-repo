@@ -29,7 +29,6 @@ export interface UserEntity {
  * UserService’in veritabanından döneceği User modeli
  */
 export interface UpdateUserPayload {
-  id: string
   email?: string
   fullName?: string
 }

@@ -1,14 +1,13 @@
-// src/gateway/gateway.module.ts
 import { Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ClientsModule, Transport } from '@nestjs/microservices'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { AuthService } from './auth.service'
+import { AuthController } from './auth.controller'
 import { AppLogger } from '@dailyshop/shared-utils'
-import { GatewayController } from './gateway.controller'
-import { GatewayService } from './gateway.service'
 
 @Module({
   imports: [
-    ConfigModule, // .env okumak için
+    ConfigModule,
     ClientsModule.registerAsync([
       {
         name: 'AUTH_SERVICE',
@@ -36,7 +35,7 @@ import { GatewayService } from './gateway.service'
       }
     ])
   ],
-  controllers: [GatewayController],
-  providers: [GatewayService, AppLogger]
+  controllers: [AuthController],
+  providers: [AuthService, AppLogger]
 })
-export class GatewayModule {}
+export class AuthModule {}
