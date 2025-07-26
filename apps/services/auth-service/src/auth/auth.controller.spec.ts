@@ -1,8 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
-import { RegisterDto } from './dto/register.dto'
 import { LoginDto } from './dto/login.dto'
+import { RegisterDto } from './dto/register.dto'
+
+// Mock the shared-utils module
+jest.mock('@dailyshop/shared-utils', () => ({
+  AppLogger: jest.fn().mockImplementation(() => ({
+    log: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn()
+  }))
+}))
 
 describe('AuthController', () => {
   let controller: AuthController

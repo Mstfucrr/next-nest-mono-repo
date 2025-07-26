@@ -1,4 +1,4 @@
-import { CreateUserPayload, UpdateUserPayload, UserEntity, UserResult } from '@dailyshop/shared-types'
+import { CreateUserPayload, UserEntity, UserResult } from '@dailyshop/shared-types'
 import { AppLogger } from '@dailyshop/shared-utils'
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
@@ -31,7 +31,7 @@ export class UsersService {
     })
   }
 
-  async update(id: string, dto: UpdateUserPayload): Promise<UserEntity | null> {
+  async update(id: string, dto: { email?: string; fullName?: string }): Promise<UserEntity | null> {
     this.logger.log(`Updating user ${id}`)
     return this.prisma.user.update({
       where: { id },
