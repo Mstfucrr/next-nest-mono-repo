@@ -1,11 +1,9 @@
-import { AuthResult, ValidateTokenResult } from '@dailyshop/shared-types'
+import { AuthResult, LoginPayload, RegisterPayload, ValidateTokenResult } from '@dailyshop/shared-types'
 import { AppLogger } from '@dailyshop/shared-utils'
 import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import * as crypto from 'crypto'
-import { LoginDto } from './dto/login.dto'
-import { RegisterDto } from './dto/register.dto'
 import { Auth } from './entities/auth.entity'
 
 @Injectable()
@@ -15,7 +13,7 @@ export class AuthService {
     private readonly logger: AppLogger
   ) {}
 
-  async register(dto: RegisterDto): Promise<AuthResult> {
+  async register(dto: RegisterPayload): Promise<AuthResult> {
     this.logger.log(`Registering user: ${dto.email}`)
     const hashedPassword = await bcrypt.hash(dto.password, 10)
 
@@ -35,7 +33,7 @@ export class AuthService {
     }
   }
 
-  login(dto: LoginDto): { access_token: string } {
+  login(dto: LoginPayload): { access_token: string } {
     this.logger.log(`Login attempt: ${dto.email}`)
     const payload = { sub: 'dummy-user-id', email: dto.email }
     const token = this.jwtService.sign(payload)
