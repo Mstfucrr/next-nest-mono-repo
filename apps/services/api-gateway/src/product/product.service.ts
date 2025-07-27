@@ -1,9 +1,13 @@
-import { CreateProductPayload, ProductResult } from '@dailyshop/shared-types'
+import {
+  CreateProductPayload,
+  ProductEntity,
+  ProductResult,
+  UpdateProductPayload
+} from '@dailyshop/shared-types'
 import { AppLogger } from '@dailyshop/shared-utils'
 import { Inject, Injectable } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
 import { firstValueFrom } from 'rxjs'
-import { UpdateProductDto } from './dto/update-product.dto'
 
 @Injectable()
 export class ProductService {
@@ -12,24 +16,34 @@ export class ProductService {
     private readonly logger: AppLogger
   ) {}
 
-  async create(dto: CreateProductPayload) {
+  async create(dto: CreateProductPayload): Promise<ProductResult> {
     this.logger.log(`Creating product with payload: ${JSON.stringify(dto)}`)
-    return firstValueFrom<ProductResult>(this.productClient.send({ cmd: 'product-create' }, dto))
+    return firstValueFrom<ProductResult>(
+      this.productClient.send({ cmd: 'product-create' }, dto)
+    )
   }
 
-  findAll() {
-    return `This action returns all product`
+  async findAll(): Promise<ProductEntity[]> {
+    return firstValueFrom<ProductEntity[]>(
+      this.productClient.send({ cmd: 'product-find-all' }, {})
+    )
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`
+  async findOne(id: string): Promise<ProductEntity | null> {
+    return firstValueFrom<ProductEntity | null>(
+      this.productClient.send({ cmd: 'product-find-one' }, { id })
+    )
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`
+  async update(id: string, dto: UpdateProductPayload): Promise<ProductEntity | null> {
+    return firstValueFrom<ProductEntity | null>(
+      this.productClient.send({ cmd: 'product-update' }, { id, data: dto })
+    )
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`
+  async remove(id: string): Promise<boolean> {
+    return firstValueFrom<boolean>(
+      this.productClient.send({ cmd: 'product-remove' }, { id })
+    )
   }
 }
