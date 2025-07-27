@@ -20,7 +20,7 @@ export class UserService {
   }
 
   async findAll(): Promise<UserEntity[]> {
-    this.logger.log(`Fetching all users ${JSON.stringify(this.prisma)}`)
+    this.logger.log('Fetching all users')
     return await this.prisma.user.findMany()
   }
 

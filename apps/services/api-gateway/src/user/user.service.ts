@@ -23,7 +23,7 @@ export class UserService {
 
   async findOne(id: string): Promise<UserEntity | null> {
     this.logger.log(`Fetching user ${id}`)
-    return firstValueFrom<UserEntity | null>(this.userClient.send({ cmd: 'user-find-one' }, id))
+    return firstValueFrom<UserEntity | null>(this.userClient.send({ cmd: 'user-find-one' }, { id }))
   }
 
   async update(id: string, dto: UpdateUserPayload): Promise<UserEntity | null> {
@@ -33,6 +33,6 @@ export class UserService {
 
   async remove(id: string): Promise<boolean> {
     this.logger.log(`Removing user ${id}`)
-    return firstValueFrom<boolean>(this.userClient.send({ cmd: 'user-remove' }, id))
+    return firstValueFrom<boolean>(this.userClient.send({ cmd: 'user-remove' }, { id }))
   }
 }
