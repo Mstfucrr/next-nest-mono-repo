@@ -1,8 +1,8 @@
 import { AppLogger } from '@dailyshop/shared-utils'
 import { Test, TestingModule } from '@nestjs/testing'
 import { PrismaService } from '../prisma/prisma.service'
-import { UsersController } from './user.controller'
-import { UsersService } from './user.service'
+import { UserController } from './user.controller'
+import { UserService } from './user.service'
 
 // Mock the shared-utils module
 jest.mock('@dailyshop/shared-utils', () => ({
@@ -14,13 +14,13 @@ jest.mock('@dailyshop/shared-utils', () => ({
 }))
 
 describe('UsersController', () => {
-  let controller: UsersController
+  let controller: UserController
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [UsersController],
+      controllers: [UserController],
       providers: [
-        UsersService,
+        UserService,
         PrismaService,
         {
           provide: AppLogger,
@@ -33,7 +33,7 @@ describe('UsersController', () => {
       ]
     }).compile()
 
-    controller = module.get<UsersController>(UsersController)
+    controller = module.get<UserController>(UserController)
   })
 
   it('should be defined', () => {
