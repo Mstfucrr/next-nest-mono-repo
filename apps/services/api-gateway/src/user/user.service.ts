@@ -1,8 +1,8 @@
+import { CreateUserPayload, UpdateUserPayload, UserEntity, UserResult } from '@dailyshop/shared-types'
+import { AppLogger } from '@dailyshop/shared-utils'
 import { Inject, Injectable } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
 import { firstValueFrom } from 'rxjs'
-import { CreateUserPayload, UpdateUserPayload, UserEntity, UserResult } from '@dailyshop/shared-types'
-import { AppLogger } from '@dailyshop/shared-utils'
 
 @Injectable()
 export class UserService {
