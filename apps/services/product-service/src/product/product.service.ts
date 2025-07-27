@@ -1,9 +1,4 @@
-import {
-  CreateProductPayload,
-  ProductEntity,
-  ProductResult,
-  UpdateProductPayload
-} from '@dailyshop/shared-types'
+import { CreateProductPayload, ProductEntity, ProductResult, UpdateProductPayload } from '@dailyshop/shared-types'
 import { Injectable } from '@nestjs/common'
 
 @Injectable()
