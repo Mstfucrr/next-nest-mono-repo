@@ -21,7 +21,8 @@
     "allowJs": true,
     "paths": {
       "@dailyshop/shared-types": ["../../../libs/shared-types/src/index.ts"],
-      "@dailyshop/shared-utils": ["../../../libs/shared-utils/src/index.ts"]
+      "@dailyshop/shared-utils": ["../../../libs/shared-utils/src/index.ts"],
+      "@dailyshop/prisma": ["../../../libs/prisma/src/index.ts"]
     }
   },
   "include": ["src", "jest.config.js"]

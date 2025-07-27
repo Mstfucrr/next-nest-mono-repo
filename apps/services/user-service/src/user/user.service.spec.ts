@@ -1,6 +1,6 @@
 import { AppLogger } from '@dailyshop/shared-utils'
 import { Test, TestingModule } from '@nestjs/testing'
-import { PrismaService } from '../prisma/prisma.service'
+import { PrismaService } from '@dailyshop/prisma'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'

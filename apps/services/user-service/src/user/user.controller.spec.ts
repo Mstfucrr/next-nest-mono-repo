@@ -1,6 +1,6 @@
 import { AppLogger } from '@dailyshop/shared-utils'
 import { Test, TestingModule } from '@nestjs/testing'
-import { PrismaService } from '../prisma/prisma.service'
+import { PrismaService } from '@dailyshop/prisma'
 import { UsersController } from './user.controller'
 import { UsersService } from './user.service'
 

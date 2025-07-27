@@ -1,7 +1,7 @@
 import { CreateUserPayload, UpdateUserPayload, UserEntity, UserResult } from '@dailyshop/shared-types'
 import { AppLogger } from '@dailyshop/shared-utils'
 import { Injectable } from '@nestjs/common'
-import { PrismaService } from '../prisma/prisma.service'
+import { PrismaService } from '@dailyshop/prisma'
 
 @Injectable()
 export class UsersService {
