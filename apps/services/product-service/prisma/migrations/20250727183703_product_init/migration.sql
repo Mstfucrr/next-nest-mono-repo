@@ -1,6 +1,3 @@
--- CreateSchema
-CREATE SCHEMA IF NOT EXISTS "product_service";
-
 -- CreateTable
 CREATE TABLE "product_service"."products" (
     "id" TEXT NOT NULL,
