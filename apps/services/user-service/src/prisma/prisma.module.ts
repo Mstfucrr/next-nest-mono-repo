@@ -1,6 +1,6 @@
+import { AppLogger } from '@dailyshop/shared-utils'
 import { Global, Module } from '@nestjs/common'
 import { PrismaService } from './prisma.service'
-import { AppLogger } from '@dailyshop/shared-utils'
 
 @Global()
 @Module({
