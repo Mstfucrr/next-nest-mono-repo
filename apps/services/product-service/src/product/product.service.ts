@@ -1,10 +1,9 @@
+import { CreateProductPayload, UpdateProductPayload } from '@dailyshop/shared-types'
 import { Injectable } from '@nestjs/common'
-import { CreateProductDto } from './dto/create-product.dto'
-import { UpdateProductDto } from './dto/update-product.dto'
 
 @Injectable()
 export class ProductService {
-  create(createProductDto: CreateProductDto) {
+  create(payload: CreateProductPayload) {
     return 'This action adds a new product'
   }
 
@@ -12,15 +11,15 @@ export class ProductService {
     return `This action returns all product`
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} product`
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
+  update(id: string, payload: UpdateProductPayload) {
     return `This action updates a #${id} product`
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} product`
   }
 }
