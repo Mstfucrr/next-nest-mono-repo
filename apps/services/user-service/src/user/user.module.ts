@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common'
-import { UsersService } from './user.service'
-import { UsersController } from './user.controller'
 import { AppLogger } from '@dailyshop/shared-utils'
+import { Module } from '@nestjs/common'
+import { UserController } from './user.controller'
+import { UserService } from './user.service'
 
 @Module({
-  controllers: [UsersController],
-  providers: [UsersService, AppLogger]
+  controllers: [UserController],
+  providers: [UserService, AppLogger]
 })
 export class UserModule {}

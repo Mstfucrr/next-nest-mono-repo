@@ -1,3 +1,4 @@
+import { AppLogger } from '@dailyshop/shared-utils'
 import { Controller } from '@nestjs/common'
 import { MessagePattern, Payload } from '@nestjs/microservices'
 import { CreateProductDto } from './dto/create-product.dto'
@@ -6,11 +7,15 @@ import { ProductService } from './product.service'
 
 @Controller()
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly logger: AppLogger
+  ) {}
 
   @MessagePattern({ cmd: 'product-create' })
-  create(@Payload() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto)
+  create(@Payload() dto: CreateProductDto) {
+    this.logger.log(`Creating product with payload: ${JSON.stringify(dto)}`)
+    return this.productService.create(dto)
   }
 
   @MessagePattern({ cmd: 'product-find-all' })
@@ -19,17 +24,17 @@ export class ProductController {
   }
 
   @MessagePattern({ cmd: 'product-find-one' })
-  findOne(@Payload() id: number) {
-    return this.productService.findOne(id)
+  findOne(@Payload() payload: { id: string }) {
+    return this.productService.findOne(payload.id)
   }
 
   @MessagePattern({ cmd: 'product-update' })
-  update(@Payload() updateProductDto: UpdateProductDto) {
-    return this.productService.update(updateProductDto.id, updateProductDto)
+  update(@Payload() payload: { id: string; data: UpdateProductDto }) {
+    return this.productService.update(payload.id, payload.data)
   }
 
   @MessagePattern({ cmd: 'product-remove' })
-  remove(@Payload() id: number) {
-    return this.productService.remove(id)
+  remove(@Payload() payload: { id: string }) {
+    return this.productService.remove(payload.id)
   }
 }

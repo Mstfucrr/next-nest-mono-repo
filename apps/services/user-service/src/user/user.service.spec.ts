@@ -4,7 +4,7 @@ import { PrismaService } from '../prisma/prisma.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'
-import { UsersService } from './user.service'
+import { UserService } from './user.service'
 
 // Mock the shared-utils module
 jest.mock('@dailyshop/shared-utils', () => ({
@@ -16,7 +16,7 @@ jest.mock('@dailyshop/shared-utils', () => ({
 }))
 
 describe('UsersService', () => {
-  let service: UsersService
+  let service: UserService
 
   const mockUser: User = {
     id: '1',
@@ -49,7 +49,7 @@ describe('UsersService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UsersService,
+        UserService,
         {
           provide: PrismaService,
           useValue: mockPrismaService
@@ -65,7 +65,7 @@ describe('UsersService', () => {
       ]
     }).compile()
 
-    service = module.get<UsersService>(UsersService)
+    service = module.get<UserService>(UserService)
   })
 
   afterEach(() => {

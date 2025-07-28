@@ -27,8 +27,8 @@ function runServicesCommand(command, includeWeb = false) {
   if (command === 'start:dev') {
     const serviceCommands = services.map(service => {
       const servicePath = path.join(__dirname, '..', 'apps', 'services', service)
-      // Tüm servisler için ts-node kullan
-      return `"cd ${servicePath} && npx ts-node src/main.ts"`
+      // Tüm servisler için ts-node kullan ve hot reload sağla
+      return `"cd ${servicePath} && npx nodemon -r tsconfig-paths/register src/main.ts --watch src"`
     })
     const allCommands = serviceCommands.join(' ')
 

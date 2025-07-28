@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "products" (
+CREATE TABLE "product_service"."products" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL DEFAULT '',
@@ -11,4 +11,4 @@ CREATE TABLE "products" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "products_name_key" ON "products"("name");
+CREATE UNIQUE INDEX "products_name_key" ON "product_service"."products"("name");

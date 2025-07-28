@@ -4,6 +4,7 @@ import { AppLogger } from '@dailyshop/shared-utils'
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from './auth/auth.module'
 import { UserModule } from './user/user.module'
+import { ProductModule } from './product/product.module'
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { UserModule } from './user/user.module'
 
     // Auth ve User modülleri HTTP endpointlerini ve microservice client bağlantılarını içerir
     AuthModule,
-    UserModule
+    UserModule,
+    ProductModule
   ],
   providers: [AppLogger]
 })
