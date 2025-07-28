@@ -1,0 +1,10 @@
+# Ignore node and build outputs
+**/node_modules
+**/dist
+**/.next
+**/build
+**/.turbo
+
+# Ignore logs and environment files
+*.log
+.env

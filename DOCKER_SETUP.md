@@ -11,7 +11,8 @@ Bu repo icin Docker ortamini kullanarak tum servisleri ve web uygulamasini calis
 docker compose up --build
 ```
 
-Bu komut tüm servisleri ve Next.js uygulamasını derler ve başlatır. Aşağıdaki portlar kullanılır:
+Bu komut `.dockerignore` dosyasında belirtilen gereksiz dosyaları hariç
+tutarak tüm servisleri ve Next.js uygulamasını derler ve başlatır. Aşağıdaki portlar kullanılır:
 
 - API Gateway: `http://localhost:4000`
 - Auth Service: `tcp://localhost:4001`
