@@ -1,5 +1,5 @@
 # Stage 1: Install dependencies and build
-FROM node:18 AS builder
+FROM node:24.4.1 AS builder
 WORKDIR /app
 
 # Install pnpm via corepack
@@ -24,7 +24,7 @@ RUN pnpm --filter @dailyshop/shared-types build
 RUN pnpm --filter api-gateway build
 
 # Stage 2: Prepare production image
-FROM node:18-alpine AS runner
+FROM node:24.4.1-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
