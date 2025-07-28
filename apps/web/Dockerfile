@@ -19,6 +19,9 @@ FROM node:24.4.1-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
+# Install pnpm runtime via corepack
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 COPY --from=builder /app/apps/web/.next apps/web/.next
 COPY --from=builder /app/apps/web/public apps/web/public
 COPY --from=builder /app/node_modules ./node_modules
