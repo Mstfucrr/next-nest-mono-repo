@@ -12,6 +12,11 @@ RUN pnpm install --frozen-lockfile
 
 COPY apps/services/auth-service apps/services/auth-service
 
+# Build shared libraries first
+RUN pnpm --filter @dailyshop/shared-utils build
+RUN pnpm --filter @dailyshop/shared-types build
+
+
 RUN pnpm --filter auth-service build
 
 # Stage 2

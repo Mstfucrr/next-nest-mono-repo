@@ -1,6 +1,5 @@
 # Ignore node and build outputs
 **/node_modules
-**/dist
 **/.next
 **/build
 **/.turbo

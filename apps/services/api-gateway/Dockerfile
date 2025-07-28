@@ -16,6 +16,10 @@ RUN pnpm install --frozen-lockfile
 # Copy source
 COPY apps/services/api-gateway apps/services/api-gateway
 
+# Build shared libraries first
+RUN pnpm --filter @dailyshop/shared-utils build
+RUN pnpm --filter @dailyshop/shared-types build
+
 # Build the service
 RUN pnpm --filter api-gateway build
 

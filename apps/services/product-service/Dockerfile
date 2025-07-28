@@ -12,6 +12,11 @@ RUN pnpm install --frozen-lockfile
 
 COPY apps/services/product-service apps/services/product-service
 
+# Build shared libraries first
+RUN pnpm --filter @dailyshop/shared-utils build
+RUN pnpm --filter @dailyshop/shared-types build
+
+
 RUN pnpm --filter product-service build
 
 # Stage 2
