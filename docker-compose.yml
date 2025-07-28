@@ -1,0 +1,43 @@
+version: '3.8'
+
+# Tum servisleri ve web uygulamasini tek komutla calistirmak icin
+services:
+  # API Gateway servisi
+  api-gateway:
+    build:
+      context: .
+      dockerfile: apps/services/api-gateway/Dockerfile
+    ports:
+      - "3001:3000"
+
+  # Kimlik dogrulama servisi
+  auth-service:
+    build:
+      context: .
+      dockerfile: apps/services/auth-service/Dockerfile
+    ports:
+      - "3002:3000"
+
+  # Urun yonetim servisi
+  product-service:
+    build:
+      context: .
+      dockerfile: apps/services/product-service/Dockerfile
+    ports:
+      - "3003:3000"
+
+  # Kullanici yonetim servisi
+  user-service:
+    build:
+      context: .
+      dockerfile: apps/services/user-service/Dockerfile
+    ports:
+      - "3004:3000"
+
+  # Next.js web uygulamasi
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "3000:3000"
