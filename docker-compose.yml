@@ -1,0 +1,37 @@
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: apps/services/api-gateway/Dockerfile
+    environment:
+      - AUTH_SERVICE_HOST=auth-service
+      - USER_SERVICE_HOST=user-service
+      - PRODUCT_SERVICE_HOST=product-service
+    ports:
+      - "4000:4000"
+  auth-service:
+    build:
+      context: .
+      dockerfile: apps/services/auth-service/Dockerfile
+    ports:
+      - "4001:4001"
+  user-service:
+    build:
+      context: .
+      dockerfile: apps/services/user-service/Dockerfile
+    ports:
+      - "4002:4002"
+  product-service:
+    build:
+      context: .
+      dockerfile: apps/services/product-service/Dockerfile
+    ports:
+      - "4003:4003"
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    depends_on:
+      - api-gateway
+    ports:
+      - "3000:3000"
