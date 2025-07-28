@@ -12,7 +12,7 @@
     "test:web": "pnpm --filter web test",
     "dev": "concurrently -n SERVICES,WEB -c blue,green \"pnpm:dev:services\" \"pnpm:dev:web\"",
     "dev:services": "node scripts/services.js start:dev",
-    "dev:web": "pnpm --filter web dev --port 3003",
+    "dev:web": "pnpm --filter web dev",
     "build:services": "node scripts/services.js build",
     "build:web": "pnpm --filter web build",
     "format": "prettier --write \"apps/**/*.{js,ts,jsx,tsx,json,css,md}\"",
