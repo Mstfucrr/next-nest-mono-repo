@@ -8,6 +8,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 # Copy package definitions
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/services/api-gateway/package.json apps/services/api-gateway/
+COPY tsconfig.json tsconfig.json
 COPY libs libs
 
 # Install dependencies

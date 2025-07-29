@@ -6,6 +6,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/services/auth-service/package.json apps/services/auth-service/
+COPY tsconfig.json tsconfig.json
 COPY libs libs
 
 RUN pnpm install --frozen-lockfile
