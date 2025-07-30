@@ -51,6 +51,25 @@ function runServicesCommand(command, includeWeb = false) {
       console.error(`Error running ${command}:`, error.message)
       process.exit(1)
     }
+  } else if (command === 'prisma:generate') {
+    // Prisma generate komutu için sadece Prisma kullanan servisleri çalıştır
+    const prismaServices = ['user-service', 'product-service']
+    const commands = prismaServices.map(service => {
+      const servicePath = path.join(__dirname, '..', 'apps', 'services', service)
+      return `cd ${servicePath} && pnpm dlx prisma generate`
+    })
+
+    try {
+      console.log('Generating Prisma client for services...')
+      for (const cmd of commands) {
+        console.log(`Running: ${cmd}`)
+        execSync(cmd, { stdio: 'inherit' })
+      }
+      console.log('Prisma client generation completed successfully!')
+    } catch (error) {
+      console.error(`Error running prisma:generate:`, error.message)
+      process.exit(1)
+    }
   } else {
     // Diğer komutlar için sıralı çalıştır
     const commands = services.map(service => {
@@ -83,7 +102,7 @@ const includeWeb = args.includes('--include-web')
 
 if (!command) {
   console.error('Usage: node scripts/services.js <command> [--include-web]')
-  console.error('Commands: build, format, format:check, lint, start:dev')
+  console.error('Commands: build, format, format:check, lint, start:dev, prisma:generate')
   process.exit(1)
 }
 
