@@ -19,7 +19,8 @@
     "format:services": "node scripts/services.js format",
     "format:web": "pnpm --filter web format",
     "format:check": "node scripts/services.js format:check --include-web",
-    "lint": "node scripts/services.js lint --include-web"
+    "lint": "node scripts/services.js lint --include-web",
+    "setup:prisma": "node scripts/services.js prisma:generate"
   },
   "keywords": [],
   "author": "",
