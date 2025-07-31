@@ -30,7 +30,7 @@
     "turbo:check-types": "turbo check-types",
     "turbo:build:services": "turbo build --filter=./apps/services/*",
     "turbo:build:libs": "turbo build --filter=./libs/*",
-    "turbo:dev:services": "turbo dev --filter=./apps/services/* --parallel",
+    "turbo:dev:services": "turbo start:dev --filter=./apps/services/* --parallel",
     "turbo:dev:web": "turbo dev --filter=./apps/web --parallel",
     "turbo:lint:services": "turbo lint --filter=./apps/services/*",
     "turbo:test:services": "turbo test --filter=./apps/services/*",
