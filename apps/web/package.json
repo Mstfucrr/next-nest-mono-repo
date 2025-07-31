@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write . --config ../../.prettierrc.js",
-    "format:check": "prettier --check . --config ../../.prettierrc.js"
+    "format:check": "prettier --check . --config ../../.prettierrc.js",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.83.0",

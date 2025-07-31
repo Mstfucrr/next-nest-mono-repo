@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@dailyshop/shared-types':
+        specifier: workspace:*
+        version: link:../../../libs/shared-types
+      '@dailyshop/shared-utils':
+        specifier: workspace:*
+        version: link:../../../libs/shared-utils
       '@nestjs/common':
         specifier: ^11.0.1
         version: 11.1.4(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
