@@ -8,11 +8,7 @@
     "sourceMap": true,
     "strict": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "baseUrl": ".",
-    "paths": {
-      "@prisma/client": ["./prisma/generated/prisma"]
-    }
+    "experimentalDecorators": true
   },
   "include": ["src"]
 }
