@@ -21,7 +21,21 @@
     "format:web": "pnpm --filter web format",
     "format:check": "node scripts/services.js format:check --include-web",
     "lint": "node scripts/services.js lint --include-web",
-    "setup:prisma": "node scripts/services.js prisma:generate"
+    "setup:prisma": "node scripts/services.js prisma:generate",
+    "turbo:build": "turbo build",
+    "turbo:dev": "turbo dev",
+    "turbo:lint": "turbo lint",
+    "turbo:test": "turbo test",
+    "turbo:format": "turbo format",
+    "turbo:check-types": "turbo check-types",
+    "turbo:build:services": "turbo build --filter=./apps/services/*",
+    "turbo:build:libs": "turbo build --filter=./libs/*",
+    "turbo:dev:services": "turbo dev --filter=./apps/services/auth-service --parallel",
+    "turbo:dev:web": "turbo dev --filter=./apps/web --parallel",
+    "turbo:lint:services": "turbo lint --filter=./apps/services/*",
+    "turbo:test:services": "turbo test --filter=./apps/services/*",
+    "turbo:format:services": "turbo format --filter=./apps/services/*",
+    "turbo:start:services": "turbo start --filter=./apps/services/*"
   },
   "keywords": [],
   "author": "",
@@ -33,10 +47,12 @@
   "devDependencies": {
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
-    "turbo": "^2.5.5"
+    "turbo": "^2.5.5",
+    "typescript": "^5.8.3"
   },
   "workspaces": [
-    "apps/*",
+    "apps/services/*",
+    "apps/web",
     "libs/*"
   ]
 }
