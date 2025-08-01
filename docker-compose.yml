@@ -9,7 +9,11 @@ services:
         HAS_PRISMA: 'false'
         START_CMD: 'node dist/main.js'
     env_file:
-      - apps/services/api-gateway/.env
+      - apps/services/api-gateway/.env.prod
+    depends_on:
+      - auth-service
+      - user-service
+      - product-service
     ports:
       - '4000:4000'
 
@@ -23,7 +27,7 @@ services:
         HAS_PRISMA: 'false'
         START_CMD: 'node dist/main.js'
     env_file:
-      - apps/services/auth-service/.env
+      - apps/services/auth-service/.env.prod
     ports:
       - '4001:4001'
 
@@ -37,7 +41,7 @@ services:
         HAS_PRISMA: 'true'
         START_CMD: 'node dist/main.js'
     env_file:
-      - apps/services/user-service/.env
+      - apps/services/user-service/.env.prod
     ports:
       - '4002:4002'
 
@@ -51,7 +55,7 @@ services:
         HAS_PRISMA: 'true'
         START_CMD: 'node dist/main.js'
     env_file:
-      - apps/services/product-service/.env
+      - apps/services/product-service/.env.prod
     ports:
       - '4003:4003'
 
@@ -60,6 +64,6 @@ services:
       context: ./apps/web
       dockerfile: Dockerfile
     env_file:
-      - apps/web/.env
+      - apps/web/.env.prod
     ports:
       - '3000:3000'

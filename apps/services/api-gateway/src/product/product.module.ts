@@ -15,7 +15,7 @@ import { ProductService } from './product.service'
         useFactory: (cs: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: cs.get<string>('PRODUCT_SERVICE_HOST') || '127.0.0.1',
+            host: cs.get<string>('PRODUCT_SERVICE_HOST') || 'product-service',
             port: cs.get<number>('PRODUCT_SERVICE_PORT') || 4003
           }
         }),
