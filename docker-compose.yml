@@ -1,0 +1,69 @@
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT_PATH: services/api-gateway
+        SERVICE_NAME: api-gateway
+        HAS_PRISMA: 'false'
+        START_CMD: 'node dist/main.js'
+    env_file:
+      - apps/services/api-gateway/.env.prod
+    depends_on:
+      - auth-service
+      - user-service
+      - product-service
+    ports:
+      - '4000:4000'
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT_PATH: services/auth-service
+        SERVICE_NAME: auth-service
+        HAS_PRISMA: 'false'
+        START_CMD: 'node dist/main.js'
+    env_file:
+      - apps/services/auth-service/.env.prod
+    ports:
+      - '4001:4001'
+
+  user-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT_PATH: services/user-service
+        SERVICE_NAME: user-service
+        HAS_PRISMA: 'true'
+        START_CMD: 'node dist/main.js'
+    env_file:
+      - apps/services/user-service/.env.prod
+    ports:
+      - '4002:4002'
+
+  product-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT_PATH: services/product-service
+        SERVICE_NAME: product-service
+        HAS_PRISMA: 'true'
+        START_CMD: 'node dist/main.js'
+    env_file:
+      - apps/services/product-service/.env.prod
+    ports:
+      - '4003:4003'
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    env_file:
+      - apps/web/.env.prod
+    ports:
+      - '3000:3000'

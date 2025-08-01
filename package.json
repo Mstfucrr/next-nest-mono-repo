@@ -35,7 +35,7 @@
     "turbo:lint:services": "turbo lint --filter=./apps/services/*",
     "turbo:test:services": "turbo test --filter=./apps/services/*",
     "turbo:format:services": "turbo format --filter=./apps/services/*",
-    "turbo:start:services": "turbo start --filter=./apps/services/*"
+    "turbo:start": "turbo start --filter=./apps/services/* --filter=./apps/web"
   },
   "keywords": [],
   "author": "",
