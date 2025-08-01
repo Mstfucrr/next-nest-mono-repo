@@ -57,13 +57,8 @@ services:
 
   web:
     build:
-      context: .
+      context: ./apps/web
       dockerfile: Dockerfile
-      args:
-        PROJECT_PATH: web
-        SERVICE_NAME: web
-        HAS_PRISMA: 'false'
-        START_CMD: 'node dist/standalone/server.js'
     env_file:
       - apps/web/.env
     ports:
