@@ -1,0 +1,52 @@
+version: '3.8'
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP: apps/services/api-gateway
+        BUILD_DIR: dist
+        START_CMD: node dist/main.js
+    ports:
+      - '4000:4000'
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP: apps/services/auth-service
+        BUILD_DIR: dist
+        START_CMD: node dist/main.js
+    ports:
+      - '4001:4001'
+  user-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP: apps/services/user-service
+        BUILD_DIR: dist
+        START_CMD: node dist/main.js
+    ports:
+      - '4002:4002'
+  product-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP: apps/services/product-service
+        BUILD_DIR: dist
+        START_CMD: node dist/main.js
+    ports:
+      - '4003:4003'
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP: apps/web
+        BUILD_DIR: .next
+        START_CMD: next start
+    ports:
+      - '3000:3000'
