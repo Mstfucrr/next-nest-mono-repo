@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common'
-import { ClientsModule, Transport } from '@nestjs/microservices'
-import { ConfigModule, ConfigService } from '@nestjs/config'
-import { AuthService } from './auth.service'
-import { AuthController } from './auth.controller'
 import { AppLogger } from '@dailyshop/shared-utils'
+import { Module } from '@nestjs/common'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ClientsModule, Transport } from '@nestjs/microservices'
+import { AuthController } from './auth.controller'
+import { AuthService } from './auth.service'
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { AppLogger } from '@dailyshop/shared-utils'
         useFactory: (cs: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: cs.get<string>('AUTH_SERVICE_HOST') || '127.0.0.1',
+            host: cs.get<string>('AUTH_SERVICE_HOST') || 'auth-service',
             port: cs.get<number>('AUTH_SERVICE_PORT') || 4001
           }
         }),
@@ -27,7 +27,7 @@ import { AppLogger } from '@dailyshop/shared-utils'
         useFactory: (cs: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: cs.get<string>('USER_SERVICE_HOST') || '127.0.0.1',
+            host: cs.get<string>('USER_SERVICE_HOST') || 'user-service',
             port: cs.get<number>('USER_SERVICE_PORT') || 4002
           }
         }),
