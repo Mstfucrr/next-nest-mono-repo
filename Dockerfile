@@ -63,12 +63,18 @@ RUN npm install -g pnpm
 
 
 ARG SERVICE_NAME
-ARG HAS_PRISMA=false
-# servido çalıştırma komutu
-ENV START_CMD="node dist/main.js"
+ARG HAS_PRISMA=false 
+# servis çalıştırma komutu
+ARG START_CMD
+ENV START_CMD=${START_CMD}
 
 # 3.2) Build'dan dist'i al
 COPY --from=build /repo/apps/${PROJECT_PATH}/dist ./dist
+
+# 3.2) package.json'u al
+COPY --from=build /repo/package.json ./package.json
+COPY --from=build /repo/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=build /repo/pnpm-lock.yaml ./pnpm-lock.yaml
 
 # 3.3) Libs'i al
 COPY --from=build /repo/libs /repo/libs
