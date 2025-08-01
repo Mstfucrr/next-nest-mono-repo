@@ -55,12 +55,13 @@ RUN pnpm turbo run build --filter=${SERVICE_NAME}
 # 3) RUNTIME AŞAMASI – production için gerekli dosyaları alır ve çalıştırır
 ###############################################################################
 FROM node:24-alpine AS runner
-WORKDIR /app
+ARG PROJECT_PATH
+WORKDIR /repo/apps/${PROJECT_PATH}
 
 # 3.1) pnpm CLI
 RUN npm install -g pnpm
 
-ARG PROJECT_PATH
+
 ARG SERVICE_NAME
 ARG HAS_PRISMA=false
 # servido çalıştırma komutu
@@ -69,10 +70,12 @@ ENV START_CMD="node dist/main.js"
 # 3.2) Build'dan dist'i al
 COPY --from=build /repo/apps/${PROJECT_PATH}/dist ./dist
 
-# 3.2) Libs'i al
-COPY --from=build /repo/libs ./libs
+# 3.3) Libs'i al
+COPY --from=build /repo/libs /repo/libs
+# 3.4) Workspace node_modules'i al (lib'lerin bağımlılıkları için)
+COPY --from=build /repo/node_modules /repo/node_modules
 
-# 3.3) Build'dan node_modules'i al (prod + prisma client içerir)
+# 3.5) Build'dan node_modules'i al (prod + prisma client içerir)
 COPY --from=build /repo/apps/${PROJECT_PATH}/node_modules ./node_modules
 
 # 3.4) Prisma client'ı runtime'a kopyala (eğer varsa)
