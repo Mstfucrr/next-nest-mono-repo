@@ -4,48 +4,62 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        APP: apps/services/api-gateway
-        BUILD_DIR: dist
-        START_CMD: node dist/main.js
+        PROJECT_PATH: services/api-gateway
+        SERVICE_NAME: api-gateway
+        HAS_PRISMA: 'false'
+    env_file:
+      - apps/services/api-gateway/.env
     ports:
       - '4000:4000'
+
   auth-service:
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        APP: apps/services/auth-service
-        BUILD_DIR: dist
-        START_CMD: node dist/main.js
+        PROJECT_PATH: services/auth-service
+        SERVICE_NAME: auth-service
+        HAS_PRISMA: 'false'
+    env_file:
+      - apps/services/auth-service/.env
     ports:
       - '4001:4001'
+
   user-service:
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        APP: apps/services/user-service
-        BUILD_DIR: dist
-        START_CMD: node dist/main.js
+        PROJECT_PATH: services/user-service
+        SERVICE_NAME: user-service
+        HAS_PRISMA: 'true'
+    env_file:
+      - apps/services/user-service/.env
     ports:
       - '4002:4002'
+
   product-service:
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        APP: apps/services/product-service
-        BUILD_DIR: dist
-        START_CMD: node dist/main.js
+        PROJECT_PATH: services/product-service
+        SERVICE_NAME: product-service
+        HAS_PRISMA: 'true'
+    env_file:
+      - apps/services/product-service/.env
     ports:
       - '4003:4003'
+
   web:
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        APP: apps/web
-        BUILD_DIR: .next
-        START_CMD: next start
+        PROJECT_PATH: web
+        SERVICE_NAME: web
+        HAS_PRISMA: 'false'
+    env_file:
+      - apps/web/.env
     ports:
       - '3000:3000'
