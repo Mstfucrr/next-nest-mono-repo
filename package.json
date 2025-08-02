@@ -23,7 +23,7 @@
     "lint": "node scripts/services.js lint --include-web",
     "setup:prisma": "node scripts/services.js prisma:generate",
     "turbo:build": "turbo build",
-    "turbo:dev": "turbo dev",
+    "turbo:dev": "concurrently -n SERVICES,WEB -c blue,green \"pnpm turbo:dev:services\" \"pnpm turbo:dev:web\"",
     "turbo:lint": "turbo lint",
     "turbo:test": "turbo test",
     "turbo:format": "turbo format",
