@@ -50,34 +50,33 @@ export interface CourierEntity {
   accountId: string
   isWorking: boolean
   updatedAt: Date
-  tckn?: string
+  tckn: string | null
   createdAt: Date
-  phone?: string
+  phone: string | null
   name: string
   iv: number
   state: string
   DeliverPrepaidOrder: boolean
-  restaurantId?: string
-  eteration_device_brand?: string
+  restaurantId: string | null
+  eteration_device_brand: string | null
   isWorkingFlag: boolean
-  posDeviceType?: string
-  onlineReasonId?: string
-  carrierType?: number
-  countyId?: string
-  licensePlate?: string
-  otherGsm?: string
-  posDeviceId?: string
-  hubId?: string
-  address?: string
-  reasonId?: string
-  eteration_device_token?: string
-  carrierBillingType?: number
-  imei?: string
-  iban?: string
-  mail?: string
-  taxAreaCode?: string
-  vkn?: string
+  posDeviceType: string | null
+  onlineReasonId: string | null
+  carrierType: number | null
+  countyId: string | null
+  licensePlate: string | null
+  otherGsm: string | null
+  posDeviceId: string | null
+  hubId: string | null
+  address: string | null
+  reasonId: string | null
+  eteration_device_token: string | null
+  carrierBillingType: number | null
+  imei: string | null
+  iban: string | null
+  mail: string | null
+  taxAreaCode: string | null
+  vkn: string | null
   isTest: boolean
   eteration_imei_updated: boolean
 }
-
