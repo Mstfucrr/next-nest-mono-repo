@@ -1,13 +1,22 @@
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator'
 
-export class UpdateCourierDto {
+export class CreateCourierDto {
   @IsString()
-  @IsOptional()
-  name?: string
+  externalId!: string
+
+  @IsString()
+  accountId!: string
+
+  @IsString()
+  name!: string
 
   @IsString()
   @IsOptional()
   phone?: string
+
+  @IsString()
+  @IsOptional()
+  tckn?: string
 
   @IsString()
   @IsOptional()
@@ -36,10 +45,6 @@ export class UpdateCourierDto {
   @IsString()
   @IsOptional()
   vkn?: string
-
-  @IsString()
-  @IsOptional()
-  tckn?: string
 
   @IsString()
   @IsOptional()
@@ -83,31 +88,25 @@ export class UpdateCourierDto {
 
   @IsString()
   @IsOptional()
-  state?: string
+  state!: string
 
   @IsBoolean()
-  @IsOptional()
-  isWorking?: boolean
+  isWorking!: boolean
 
   @IsBoolean()
-  @IsOptional()
-  isWorkingFlag?: boolean
+  isWorkingFlag!: boolean
 
   @IsBoolean()
-  @IsOptional()
-  DeliverPrepaidOrder?: boolean
+  DeliverPrepaidOrder!: boolean
 
   @IsBoolean()
-  @IsOptional()
-  isTest?: boolean
+  isTest!: boolean
 
   @IsBoolean()
-  @IsOptional()
-  eteration_imei_updated?: boolean
+  eteration_imei_updated!: boolean
 
   @IsNumber()
-  @IsOptional()
-  iv?: number
+  iv!: number
 
   @IsNumber()
   @IsOptional()

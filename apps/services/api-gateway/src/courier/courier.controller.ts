@@ -1,10 +1,16 @@
-import { UpdateCourierPayload } from '@dailyshop/shared-types'
-import { Body, Controller, Get, Param, Patch } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { CourierService } from './courier.service'
+import { CreateCourierDto } from './dto/create-courier.dto'
+import { UpdateCourierDto } from './dto/update-courier.dto'
 
 @Controller('courier')
 export class CourierController {
   constructor(private readonly courierService: CourierService) {}
+
+  @Post()
+  create(@Body() dto: CreateCourierDto) {
+    return this.courierService.create(dto)
+  }
 
   @Get()
   findAll() {
@@ -17,7 +23,7 @@ export class CourierController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateCourierPayload) {
+  update(@Param('id') id: string, @Body() dto: UpdateCourierDto) {
     return this.courierService.update(id, dto)
   }
 }
