@@ -1,0 +1,53 @@
+// Courier service Prisma schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["courier_service"]
+}
+
+model Courier {
+  id                   String   @id @default(cuid())
+  externalId           String
+  accountId            String
+  isWorking            Boolean
+  updatedAt            DateTime @updatedAt
+  tckn                 String?
+  createdAt            DateTime @default(now())
+  phone                String?
+  name                 String
+  iv                   Int
+  state                String
+  DeliverPrepaidOrder  Boolean
+  restaurantId         String?
+  eteration_device_brand String?
+  isWorkingFlag        Boolean
+  posDeviceType        String?
+  onlineReasonId       String?
+  carrierType          Int?
+  countyId             String?
+  licensePlate         String?
+  otherGsm             String?
+  posDeviceId          String?
+  hubId                String?
+  address              String?
+  reasonId             String?
+  eteration_device_token String?
+  carrierBillingType   Int?
+  imei                 String?
+  iban                 String?
+  mail                 String?
+  taxAreaCode          String?
+  vkn                  String?
+  isTest               Boolean
+  eteration_imei_updated Boolean
+
+  @@map("couriers")
+  @@schema("courier_service")
+}

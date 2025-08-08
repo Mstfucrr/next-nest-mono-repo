@@ -1,10 +1,11 @@
 // src/app.module.ts
-import { Module } from '@nestjs/common'
 import { AppLogger } from '@dailyshop/shared-utils'
+import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from './auth/auth.module'
-import { UserModule } from './user/user.module'
+import { CourierModule } from './courier/courier.module'
 import { ProductModule } from './product/product.module'
+import { UserModule } from './user/user.module'
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { ProductModule } from './product/product.module'
     // Auth ve User modülleri HTTP endpointlerini ve microservice client bağlantılarını içerir
     AuthModule,
     UserModule,
-    ProductModule
+    ProductModule,
+    CourierModule
   ],
   providers: [AppLogger]
 })
