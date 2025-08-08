@@ -1,4 +1,4 @@
-import { CourierEntity } from '@dailyshop/shared-types'
+import { CourierEntity, CourierResult } from '@dailyshop/shared-types'
 import { AppLogger } from '@dailyshop/shared-utils'
 import { Controller } from '@nestjs/common'
 import { MessagePattern, Payload } from '@nestjs/microservices'
@@ -14,7 +14,7 @@ export class CourierController {
   ) {}
 
   @MessagePattern({ cmd: 'courier-create' })
-  create(@Payload() payload: CreateCourierDto): Promise<CourierEntity> {
+  create(@Payload() payload: CreateCourierDto): Promise<CourierResult> {
     this.logger.log('Create courier request received')
     return this.courierService.create(payload)
   }
@@ -32,7 +32,7 @@ export class CourierController {
   }
 
   @MessagePattern({ cmd: 'courier-update' })
-  update(@Payload() payload: { id: string; data: UpdateCourierDto }): Promise<CourierEntity> {
+  update(@Payload() payload: { id: string; data: UpdateCourierDto }): Promise<CourierResult> {
     this.logger.log(`Update courier ${payload.id}`)
     return this.courierService.update(payload.id, payload.data)
   }

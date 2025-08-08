@@ -1,4 +1,4 @@
-import { CourierEntity } from '@dailyshop/shared-types'
+import { CourierEntity, CourierResult } from '@dailyshop/shared-types'
 import { AppLogger } from '@dailyshop/shared-utils'
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
@@ -22,13 +22,17 @@ export class CourierService {
     return this.prisma.courier.findUnique({ where: { id } })
   }
 
-  async create(dto: CreateCourierDto): Promise<CourierEntity> {
+  async create(dto: CreateCourierDto): Promise<CourierResult> {
     this.logger.log(`Creating courier with data: ${JSON.stringify(dto)}`)
-    return this.prisma.courier.create({ data: dto })
+    const courier = await this.prisma.courier.create({ data: dto })
+    this.logger.log(`Courier created with id: ${courier.id}`)
+    return { message: 'Courier created', courier }
   }
 
-  async update(id: string, dto: UpdateCourierDto): Promise<CourierEntity> {
+  async update(id: string, dto: UpdateCourierDto): Promise<CourierResult> {
     this.logger.log(`Updating courier ${id}`)
-    return this.prisma.courier.update({ where: { id }, data: dto })
+    const courier = await this.prisma.courier.update({ where: { id }, data: dto })
+    this.logger.log(`Courier updated with id: ${courier.id}`)
+    return { message: 'Courier updated', courier }
   }
 }

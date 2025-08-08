@@ -1,4 +1,4 @@
-import { CourierEntity } from '@dailyshop/shared-types'
+import { CourierEntity, CourierResult } from '@dailyshop/shared-types'
 import { AppLogger } from '@dailyshop/shared-utils'
 import { Inject, Injectable } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
@@ -23,13 +23,13 @@ export class CourierService {
     return firstValueFrom<CourierEntity | null>(this.courierClient.send({ cmd: 'courier-find-one' }, { id }))
   }
 
-  async create(dto: CreateCourierDto): Promise<CourierEntity> {
+  async create(dto: CreateCourierDto): Promise<CourierResult> {
     this.logger.log(`Creating courier with data: ${JSON.stringify(dto)}`)
-    return firstValueFrom<CourierEntity>(this.courierClient.send({ cmd: 'courier-create' }, dto))
+    return firstValueFrom<CourierResult>(this.courierClient.send({ cmd: 'courier-create' }, dto))
   }
 
-  async update(id: string, dto: UpdateCourierDto): Promise<CourierEntity> {
+  async update(id: string, dto: UpdateCourierDto): Promise<CourierResult> {
     this.logger.log(`Updating courier ${id}`)
-    return firstValueFrom<CourierEntity>(this.courierClient.send({ cmd: 'courier-update' }, { id, data: dto }))
+    return firstValueFrom<CourierResult>(this.courierClient.send({ cmd: 'courier-update' }, { id, data: dto }))
   }
 }
