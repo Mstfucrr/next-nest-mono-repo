@@ -53,7 +53,7 @@ function runServicesCommand(command, includeWeb = false) {
     }
   } else if (command === 'prisma:generate') {
     // Prisma generate komutu için sadece Prisma kullanan servisleri çalıştır
-    const prismaServices = ['user-service', 'product-service']
+    const prismaServices = ['user-service', 'product-service', 'courier-service']
     const commands = prismaServices.map(service => {
       const servicePath = path.join(__dirname, '..', 'apps', 'services', service)
       return `cd ${servicePath} && pnpm dlx prisma generate`
