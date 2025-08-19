@@ -5,3 +5,5 @@ build
 .env.prod
 .turbo
 .next
+
+pnpm-lock.yaml
