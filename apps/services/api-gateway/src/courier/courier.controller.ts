@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { CourierService } from './courier.service'
 import { CreateCourierDto } from './dto/create-courier.dto'
+import { CreateManyCouriersDto } from './dto/create-many-couriers.dto'
 import { UpdateCourierDto } from './dto/update-courier.dto'
 
 @ApiTags('Courier')
@@ -15,6 +16,14 @@ export class CourierController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   create(@Body() dto: CreateCourierDto) {
     return this.courierService.create(dto)
+  }
+
+  @Post('bulk')
+  @ApiOperation({ summary: 'Create multiple couriers at once' })
+  @ApiResponse({ status: 201, description: 'Couriers created successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  createMany(@Body() dto: CreateManyCouriersDto) {
+    return this.courierService.createMany(dto.couriers)
   }
 
   @Get()

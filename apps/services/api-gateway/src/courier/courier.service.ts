@@ -28,6 +28,13 @@ export class CourierService {
     return firstValueFrom<CourierResult>(this.courierClient.send({ cmd: 'courier-create' }, dto))
   }
 
+  async createMany(dtos: CreateCourierDto[]): Promise<{ message: string; couriers: CourierEntity[] }> {
+    this.logger.log(`Creating ${dtos.length} couriers`)
+    return firstValueFrom<{ message: string; couriers: CourierEntity[] }>(
+      this.courierClient.send({ cmd: 'courier-create-many' }, dtos)
+    )
+  }
+
   async update(id: string, dto: UpdateCourierDto): Promise<CourierResult> {
     this.logger.log(`Updating courier ${id}`)
     return firstValueFrom<CourierResult>(this.courierClient.send({ cmd: 'courier-update' }, { id, data: dto }))

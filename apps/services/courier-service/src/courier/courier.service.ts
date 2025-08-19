@@ -14,12 +14,12 @@ export class CourierService {
 
   async findAll(): Promise<CourierEntity[]> {
     this.logger.log('Fetching all couriers')
-    return this.prisma.courier.findMany()
+    return await this.prisma.courier.findMany()
   }
 
   async findOne(id: string): Promise<CourierEntity | null> {
     this.logger.log(`Fetching courier ${id}`)
-    return this.prisma.courier.findUnique({ where: { id } })
+    return await this.prisma.courier.findUnique({ where: { id } })
   }
 
   async create(dto: CreateCourierDto): Promise<CourierResult> {
@@ -27,6 +27,13 @@ export class CourierService {
     const courier = await this.prisma.courier.create({ data: dto })
     this.logger.log(`Courier created with id: ${courier.id}`)
     return { message: 'Courier created', courier }
+  }
+
+  async createMany(dtos: CreateCourierDto[]): Promise<{ message: string; couriers: CourierEntity[] }> {
+    this.logger.log(`Creating ${dtos.length} couriers`)
+    const couriers = await this.prisma.courier.createMany({ data: dtos })
+    this.logger.log(`Created ${couriers.count} couriers`)
+    return { message: `Created ${couriers.count} couriers`, couriers: [] }
   }
 
   async update(id: string, dto: UpdateCourierDto): Promise<CourierResult> {

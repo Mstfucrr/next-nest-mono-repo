@@ -19,6 +19,12 @@ export class CourierController {
     return this.courierService.create(payload)
   }
 
+  @MessagePattern({ cmd: 'courier-create-many' })
+  createMany(@Payload() payload: CreateCourierDto[]): Promise<{ message: string; couriers: CourierEntity[] }> {
+    this.logger.log(`Create many couriers request received: ${payload.length} couriers`)
+    return this.courierService.createMany(payload)
+  }
+
   @MessagePattern({ cmd: 'courier-find-all' })
   findAll(): Promise<CourierEntity[]> {
     this.logger.log('Find all couriers request received')

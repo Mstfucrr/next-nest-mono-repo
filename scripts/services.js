@@ -51,12 +51,13 @@ function runServicesCommand(command, includeWeb = false) {
       console.error(`Error running ${command}:`, error.message)
       process.exit(1)
     }
-  } else if (command === 'prisma:generate') {
+  } else if (command === 'prisma:generate' || command === 'prisma:generate:dev') {
     // Prisma generate komutu için sadece Prisma kullanan servisleri çalıştır
     const prismaServices = ['user-service', 'product-service', 'courier-service']
+    const prismaCommand = command === 'prisma:generate' ? 'generate' : 'migrate dev'
     const commands = prismaServices.map(service => {
       const servicePath = path.join(__dirname, '..', 'apps', 'services', service)
-      return `cd ${servicePath} && pnpm dlx prisma generate`
+      return `cd ${servicePath} && pnpm dlx prisma ${prismaCommand}`
     })
 
     try {
