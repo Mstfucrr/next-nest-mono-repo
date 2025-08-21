@@ -24,9 +24,9 @@ export default function buildPaginationQuery<T, E>(params: PaginationInput<T, E>
   searchParams.append('offset', params.offset.toString())
 
   // Sıralama parametreleri
-  if (params.sort) {
-    searchParams.append('sort', params.sort.value)
-    searchParams.append('sortKey', params.sort.key.toString())
+  if (params.sortKey && params.sortValue) {
+    searchParams.append('sort', params.sortValue)
+    searchParams.append('sortKey', params.sortKey.toString())
   }
 
   // Arama/filtreleme parametreleri

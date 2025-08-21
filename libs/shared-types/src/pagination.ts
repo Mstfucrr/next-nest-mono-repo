@@ -18,7 +18,8 @@ export type PaginationInput<T, E = unknown> = {
    * @property key - Sıralanacak veri alanı (T tipindeki bir özellik)
    * @property value - Sıralama yönü ('asc' = artan, 'desc' = azalan)
    */
-  sort?: { key: keyof T; value: 'asc' | 'desc' }
+  sortKey?: keyof T
+  sortValue?: 'asc' | 'desc'
   /**
    * Opsiyonel arama/filtreleme parametreleri.
    * Birden fazla arama kriteri eklenebilir.
@@ -30,4 +31,9 @@ export type PaginationInput<T, E = unknown> = {
    * @property value - Arama/filtreleme değeri
    */
   search?: Array<{ key: keyof T | keyof E; value: string }>
+}
+
+export type PaginationOutput<T> = {
+  rows: T[]
+  total: number
 }

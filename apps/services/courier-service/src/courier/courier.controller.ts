@@ -1,4 +1,4 @@
-import { CourierEntity, CourierResult } from '@dailyshop/shared-types'
+import { CourierEntity, CourierResult, PaginationInput, PaginationOutput } from '@dailyshop/shared-types'
 import { AppLogger } from '@dailyshop/shared-utils'
 import { Controller } from '@nestjs/common'
 import { MessagePattern, Payload } from '@nestjs/microservices'
@@ -29,6 +29,13 @@ export class CourierController {
   findAll(): Promise<CourierEntity[]> {
     this.logger.log('Find all couriers request received')
     return this.courierService.findAll()
+  }
+
+  @MessagePattern({ cmd: 'courier-find-all-with-pagination' })
+  findAllWithPagination(@Payload() payload: PaginationInput<CourierEntity>): Promise<PaginationOutput<CourierEntity>> {
+    this.logger.log(`Find all couriers with pagination request received: ${JSON.stringify(payload)}`)
+    console.log('payload', payload)
+    return this.courierService.findAllWithPagination(payload)
   }
 
   @MessagePattern({ cmd: 'courier-find-one' })

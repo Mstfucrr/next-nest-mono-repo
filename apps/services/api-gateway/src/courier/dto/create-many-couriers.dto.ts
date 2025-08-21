@@ -82,5 +82,3 @@ export class CreateManyCouriersDto {
   @Type(() => CreateCourierDto)
   couriers!: CreateCourierDto[]
 }
-
-

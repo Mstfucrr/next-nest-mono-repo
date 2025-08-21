@@ -1,6 +1,7 @@
-import { CourierEntity, CourierResult } from '@dailyshop/shared-types'
+import { CourierEntity, CourierResult, PaginationInput, PaginationOutput } from '@dailyshop/shared-types'
 import { AppLogger } from '@dailyshop/shared-utils'
 import { Injectable } from '@nestjs/common'
+import { Prisma } from '@prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreateCourierDto } from './dto/create-courier.dto'
 import { UpdateCourierDto } from './dto/update-courier.dto'
@@ -27,6 +28,29 @@ export class CourierService {
     const courier = await this.prisma.courier.create({ data: dto })
     this.logger.log(`Courier created with id: ${courier.id}`)
     return { message: 'Courier created', courier }
+  }
+
+  async findAllWithPagination(payload: PaginationInput<CourierEntity>): Promise<PaginationOutput<CourierEntity>> {
+    this.logger.log('Find all couriers with pagination request received')
+    const where: Prisma.CourierWhereInput = {
+      ...(payload.search &&
+        payload.search.length > 0 && {
+          OR: payload.search.map(({ key, value }) => ({ [key]: { contains: value, mode: 'insensitive' } }))
+        })
+    }
+    const sortKey = payload.sortKey as keyof CourierEntity
+    const sortValue = payload.sortValue as 'asc' | 'desc'
+    const orderBy: Prisma.CourierOrderByWithRelationInput = sortKey && sortValue ? { [sortKey]: sortValue } : {}
+    const [rows, total] = await this.prisma.$transaction([
+      this.prisma.courier.findMany({
+        skip: payload.offset,
+        take: payload.limit,
+        orderBy,
+        where
+      }),
+      this.prisma.courier.count({ where })
+    ])
+    return { rows, total }
   }
 
   async createMany(dtos: CreateCourierDto[]): Promise<{ message: string; couriers: CourierEntity[] }> {

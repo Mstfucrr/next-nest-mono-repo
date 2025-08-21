@@ -1,4 +1,4 @@
-import { CourierEntity, CourierResult } from '@dailyshop/shared-types'
+import { CourierEntity, CourierResult, PaginationInput, PaginationOutput } from '@dailyshop/shared-types'
 import { AppLogger } from '@dailyshop/shared-utils'
 import { Inject, Injectable } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
@@ -21,6 +21,13 @@ export class CourierService {
   async findOne(id: string): Promise<CourierEntity | null> {
     this.logger.log(`Fetching courier ${id}`)
     return firstValueFrom<CourierEntity | null>(this.courierClient.send({ cmd: 'courier-find-one' }, { id }))
+  }
+
+  async findAllWithPagination(payload: PaginationInput<CourierEntity>): Promise<PaginationOutput<CourierEntity>> {
+    this.logger.log('Find all couriers with pagination request received')
+    return firstValueFrom<PaginationOutput<CourierEntity>>(
+      this.courierClient.send({ cmd: 'courier-find-all-with-pagination' }, payload)
+    )
   }
 
   async create(dto: CreateCourierDto): Promise<CourierResult> {
