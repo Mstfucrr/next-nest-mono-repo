@@ -1,5 +1,5 @@
-import { CourierEntity, CourierResult, PaginationInput, PaginationOutput } from '@dailyshop/shared-types'
-import { AppLogger } from '@dailyshop/shared-utils'
+import { CourierEntity, CourierResult, PaginationInput } from '@dailyshop/shared-types'
+import { AppLogger, buildPrismaQuery, paginatePrisma } from '@dailyshop/shared-utils'
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { PrismaService } from '../prisma/prisma.service'
@@ -29,34 +29,30 @@ export class CourierService {
     this.logger.log(`Courier created with id: ${courier.id}`)
     return { message: 'Courier created', courier }
   }
-  async findAllWithPagination(payload: PaginationInput<CourierEntity>): Promise<PaginationOutput<CourierEntity>> {
-    this.logger.log('Find all couriers with pagination request received')
-    const where: Prisma.CourierWhereInput = {}
+  async findAllWithPagination(payload: PaginationInput<CourierEntity>) {
+    const query = buildPrismaQuery<CourierEntity, Prisma.CourierWhereInput, Prisma.CourierOrderByWithRelationInput>({
+      payload,
+      searchable: {
+        name: 'string',
+        phone: 'string',
+        mail: 'string',
+        tckn: 'string',
+        state: 'eq',
+        createdAt: 'date'
+      },
+      searchMode: 'AND',
+      defaultSort: { key: 'createdAt', value: 'desc' },
+      caseInsensitive: true,
+      coerceNumeric: true
+    })
 
-    if (payload.search && payload.search.length > 0) {
-      where.OR = payload.search.map(searchParam => {
-        const searchKey = searchParam.key as string
-        return {
-          [searchKey]: {
-            contains: searchParam.value,
-            mode: 'insensitive'
-          }
-        }
-      })
-    }
+    console.log('query', query)
+    const { rows, total } = await paginatePrisma<
+      CourierEntity,
+      Prisma.CourierWhereInput,
+      Prisma.CourierOrderByWithRelationInput
+    >(this.prisma.courier, query)
 
-    const sortKey = payload.sortKey as keyof CourierEntity
-    const sortValue = payload.sortValue as 'asc' | 'desc'
-    const orderBy: Prisma.CourierOrderByWithRelationInput = sortKey && sortValue ? { [sortKey]: sortValue } : {}
-    const [rows, total] = await this.prisma.$transaction([
-      this.prisma.courier.findMany({
-        skip: payload.offset,
-        take: payload.limit,
-        orderBy,
-        where
-      }),
-      this.prisma.courier.count({ where })
-    ])
     return { rows, total }
   }
 
