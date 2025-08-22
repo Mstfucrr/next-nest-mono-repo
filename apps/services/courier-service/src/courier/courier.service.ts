@@ -46,7 +46,6 @@ export class CourierService {
       coerceNumeric: true
     })
 
-    console.log('query', query)
     const { rows, total } = await paginatePrisma<
       CourierEntity,
       Prisma.CourierWhereInput,
