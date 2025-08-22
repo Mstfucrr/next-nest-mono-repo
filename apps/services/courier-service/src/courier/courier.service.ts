@@ -38,7 +38,8 @@ export class CourierService {
         mail: 'string',
         tckn: 'string',
         state: 'eq',
-        createdAt: 'date'
+        createdAt: 'date',
+        carrierType: 'number'
       },
       searchMode: 'AND',
       defaultSort: { key: 'createdAt', value: 'desc' },
