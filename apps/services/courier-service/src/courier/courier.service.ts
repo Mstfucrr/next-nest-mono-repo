@@ -29,15 +29,22 @@ export class CourierService {
     this.logger.log(`Courier created with id: ${courier.id}`)
     return { message: 'Courier created', courier }
   }
-
   async findAllWithPagination(payload: PaginationInput<CourierEntity>): Promise<PaginationOutput<CourierEntity>> {
     this.logger.log('Find all couriers with pagination request received')
-    const where: Prisma.CourierWhereInput = {
-      ...(payload.search &&
-        payload.search.length > 0 && {
-          OR: payload.search.map(({ key, value }) => ({ [key]: { contains: value, mode: 'insensitive' } }))
-        })
+    const where: Prisma.CourierWhereInput = {}
+
+    if (payload.search && payload.search.length > 0) {
+      where.OR = payload.search.map(searchParam => {
+        const searchKey = searchParam.key as string
+        return {
+          [searchKey]: {
+            contains: searchParam.value,
+            mode: 'insensitive'
+          }
+        }
+      })
     }
+
     const sortKey = payload.sortKey as keyof CourierEntity
     const sortValue = payload.sortValue as 'asc' | 'desc'
     const orderBy: Prisma.CourierOrderByWithRelationInput = sortKey && sortValue ? { [sortKey]: sortValue } : {}

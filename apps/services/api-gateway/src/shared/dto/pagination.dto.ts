@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { Type } from 'class-transformer'
+import { plainToInstance, Transform, Type } from 'class-transformer'
 import { IsArray, IsIn, IsInt, IsOptional, IsString, Min, ValidateNested } from 'class-validator'
 
 export class SearchParamDto {
@@ -37,5 +37,23 @@ export class PaginationQueryDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SearchParamDto)
+  @Transform(
+    ({ value }) => {
+      const arr = Array.isArray(value) ? value : [value]
+      const parsed = arr.flatMap(item => {
+        if (typeof item === 'string') {
+          try {
+            return [JSON.parse(item) as SearchParamDto]
+          } catch {
+            return []
+          }
+        }
+        if (item && typeof item === 'object') return [item as SearchParamDto]
+        return []
+      })
+      return plainToInstance(SearchParamDto, parsed)
+    },
+    { toClassOnly: true }
+  )
   search?: SearchParamDto[]
 }
