@@ -1,6 +1,18 @@
 import { CourierEntity, PaginationInput } from '@dailyshop/shared-types'
-import { Body, Controller, Get, Param, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common'
-import { ApiExtraModels, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseBoolPipe,
+  Patch,
+  Post,
+  Query,
+  UsePipes,
+  ValidationPipe
+} from '@nestjs/common'
+import { ApiExtraModels, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { PaginationQueryDto } from '../shared/dto/pagination.dto'
 import { CourierService } from './courier.service'
 import { CreateCourierDto } from './dto/create-courier.dto'
@@ -44,6 +56,33 @@ export class CourierController {
     return this.courierService.findAllWithPagination(payload as PaginationInput<CourierEntity>)
   }
 
+  @Get('working')
+  @ApiOperation({ summary: 'Get couriers by working status' })
+  @ApiResponse({ status: 200, description: 'List of couriers by working status' })
+  @ApiQuery({
+    name: 'working',
+    required: false,
+    type: Boolean,
+    description: 'true/false. Boş bırakırsanız default true olarak döner.'
+  })
+  findWorkingCouriers(@Query('working', new ParseBoolPipe({ optional: true })) working?: boolean) {
+    return this.courierService.findWorkingCouriers(working)
+  }
+
+  @Get('state/:state')
+  @ApiOperation({ summary: 'Get couriers by state' })
+  @ApiResponse({ status: 200, description: 'List of couriers by state' })
+  findByState(@Param('state') state: string) {
+    return this.courierService.findByState(state)
+  }
+
+  @Get('carrier-type/:carrierType')
+  @ApiOperation({ summary: 'Get couriers by carrier type' })
+  @ApiResponse({ status: 200, description: 'List of couriers by carrier type' })
+  findByCarrierType(@Param('carrierType') carrierType: number) {
+    return this.courierService.findByCarrierType(carrierType)
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get courier by ID' })
   @ApiResponse({ status: 200, description: 'Courier found' })
@@ -59,5 +98,13 @@ export class CourierController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   update(@Param('id') id: string, @Body() dto: UpdateCourierDto) {
     return this.courierService.update(id, dto)
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete courier by ID' })
+  @ApiResponse({ status: 200, description: 'Courier deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Courier not found' })
+  delete(@Param('id') id: string) {
+    return this.courierService.delete(id)
   }
 }

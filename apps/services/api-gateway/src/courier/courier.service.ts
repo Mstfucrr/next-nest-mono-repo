@@ -46,4 +46,28 @@ export class CourierService {
     this.logger.log(`Updating courier ${id}`)
     return firstValueFrom<CourierResult>(this.courierClient.send({ cmd: 'courier-update' }, { id, data: dto }))
   }
+
+  async delete(id: string): Promise<{ message: string; success: boolean }> {
+    this.logger.log(`Deleting courier ${id}`)
+    return firstValueFrom<{ message: string; success: boolean }>(
+      this.courierClient.send({ cmd: 'courier-delete' }, { id })
+    )
+  }
+
+  async findByState(state: string): Promise<CourierEntity[]> {
+    this.logger.log(`Fetching couriers with state: ${state}`)
+    return firstValueFrom<CourierEntity[]>(this.courierClient.send({ cmd: 'courier-find-by-state' }, { state }))
+  }
+
+  async findByCarrierType(carrierType: number): Promise<CourierEntity[]> {
+    this.logger.log(`Fetching couriers with carrier type: ${carrierType}`)
+    return firstValueFrom<CourierEntity[]>(
+      this.courierClient.send({ cmd: 'courier-find-by-carrier-type' }, { carrierType })
+    )
+  }
+
+  async findWorkingCouriers(working: boolean = true): Promise<CourierEntity[]> {
+    this.logger.log('Fetching working couriers')
+    return firstValueFrom<CourierEntity[]>(this.courierClient.send({ cmd: 'courier-find-working' }, { working }))
+  }
 }
