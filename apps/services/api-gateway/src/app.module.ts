@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from './auth/auth.module'
 import { CourierModule } from './courier/courier.module'
+import { OrderModule } from './order/order.module'
 import { ProductModule } from './product/product.module'
 import { UserModule } from './user/user.module'
 
@@ -16,7 +17,8 @@ import { UserModule } from './user/user.module'
     AuthModule,
     UserModule,
     ProductModule,
-    CourierModule
+    CourierModule,
+    OrderModule
   ],
   providers: [AppLogger]
 })
