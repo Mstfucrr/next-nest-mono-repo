@@ -11,7 +11,5 @@ export interface IOrderRepository {
   createMany(dtos: CreateOrderDto[]): Promise<{ count: number }>
   update(id: string, dto: UpdateOrderDto): Promise<OrderEntity>
   delete(id: string): Promise<boolean>
-  findAllWithPagination(
-    payload: PaginationInput<OrderEntity>
-  ): Promise<{ rows: OrderEntity[]; total: number }>
+  findAllWithPagination(payload: PaginationInput<OrderEntity>): Promise<{ rows: OrderEntity[]; total: number }>
 }
