@@ -53,7 +53,7 @@ function runServicesCommand(command, includeWeb = false) {
     }
   } else if (command === 'prisma:generate' || command === 'prisma:generate:dev') {
     // Prisma generate komutu için sadece Prisma kullanan servisleri çalıştır
-    const prismaServices = ['user-service', 'product-service', 'courier-service']
+    const prismaServices = ['user-service', 'product-service', 'courier-service', 'order-service']
     const prismaCommand = command === 'prisma:generate' ? 'generate' : 'migrate dev'
     const commands = prismaServices.map(service => {
       const servicePath = path.join(__dirname, '..', 'apps', 'services', service)

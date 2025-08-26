@@ -1,0 +1,25 @@
+// Order service Prisma schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["order_service"]
+}
+
+model Order {
+  id         String   @id @default(cuid())
+  customerId String
+  status     String
+  total      Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("orders")
+  @@schema("order_service")
+}
