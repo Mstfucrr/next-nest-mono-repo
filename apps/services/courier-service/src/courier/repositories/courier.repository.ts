@@ -41,7 +41,12 @@ export class CourierRepository implements ICourierRepository {
   }
 
   async findAllWithPagination(payload: PaginationInput<CourierEntity>) {
-    const query = buildPrismaQuery<CourierEntity, Prisma.CourierWhereInput, Prisma.CourierOrderByWithRelationInput>({
+    const query = buildPrismaQuery<
+      CourierEntity,
+      Prisma.CourierDefaultArgs,
+      Prisma.CourierWhereInput,
+      Prisma.CourierOrderByWithRelationInput
+    >({
       payload,
       searchable: {
         name: 'string',
@@ -55,11 +60,22 @@ export class CourierRepository implements ICourierRepository {
       searchMode: 'AND',
       defaultSort: { key: 'createdAt', value: 'desc' },
       caseInsensitive: true,
-      coerceNumeric: true
+      coerceNumeric: true,
+      defaultArgs: {
+        select: {
+          id: true,
+          name: true,
+          phone: true,
+          mail: true,
+          tckn: true,
+          state: true
+        }
+      }
     })
 
     const { rows, total } = await paginatePrisma<
       CourierEntity,
+      Prisma.CourierDefaultArgs,
       Prisma.CourierWhereInput,
       Prisma.CourierOrderByWithRelationInput
     >(this.prisma.courier, query)

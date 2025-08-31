@@ -41,7 +41,12 @@ export class OrderRepository implements IOrderRepository {
   }
 
   async findAllWithPagination(payload: PaginationInput<OrderEntity>) {
-    const query = buildPrismaQuery<OrderEntity, Prisma.OrderWhereInput, Prisma.OrderOrderByWithRelationInput>({
+    const query = buildPrismaQuery<
+      OrderEntity,
+      Prisma.OrderDefaultArgs,
+      Prisma.OrderWhereInput,
+      Prisma.OrderOrderByWithRelationInput
+    >({
       payload,
       searchable: {
         status: 'string',
@@ -57,6 +62,7 @@ export class OrderRepository implements IOrderRepository {
 
     const { rows, total } = await paginatePrisma<
       OrderEntity,
+      Prisma.OrderDefaultArgs,
       Prisma.OrderWhereInput,
       Prisma.OrderOrderByWithRelationInput
     >(this.prisma.order, query)

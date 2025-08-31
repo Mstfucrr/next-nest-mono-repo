@@ -13,7 +13,7 @@ type SearchClause =
  */
 export type SearchableMap<T> = Partial<Record<keyof T & string, SearchKind>>
 
-export type BuildQueryOptions<T, Where extends object, OrderBy extends object> = {
+export type BuildQueryOptions<T, DefaultArgs extends object, Where extends object, OrderBy extends object> = {
   payload: {
     limit?: number
     offset?: number
@@ -34,10 +34,12 @@ export type BuildQueryOptions<T, Where extends object, OrderBy extends object> =
   extraWhere?: Where
   /** alan adını başka bir path’e map’lemek istersen (ilişkisel alanlar için) */
   mapKey?: (k: string) => string
+  /** default args */
+  defaultArgs?: DefaultArgs
 }
 
-export function buildPrismaQuery<T, Where extends object, OrderBy extends object>(
-  opts: BuildQueryOptions<T, Where, OrderBy>
+export function buildPrismaQuery<T, DefaultArgs extends object, Where extends object, OrderBy extends object>(
+  opts: BuildQueryOptions<T, DefaultArgs, Where, OrderBy>
 ) {
   const {
     payload,
@@ -47,7 +49,8 @@ export function buildPrismaQuery<T, Where extends object, OrderBy extends object
     caseInsensitive = true,
     coerceNumeric = true,
     extraWhere,
-    mapKey
+    mapKey,
+    defaultArgs
   } = opts
 
   const take = Number(payload.limit ?? 10)
@@ -111,6 +114,7 @@ export function buildPrismaQuery<T, Where extends object, OrderBy extends object
     where,
     orderBy: safeSort as OrderBy | undefined,
     skip,
-    take
+    take,
+    ...(defaultArgs && { defaultArgs: defaultArgs as DefaultArgs })
   }
 }
