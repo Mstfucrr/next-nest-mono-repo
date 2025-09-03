@@ -49,8 +49,6 @@ export class OrderService {
 
   async delete(id: string): Promise<{ message: string; success: boolean }> {
     this.logger.log(`Deleting order ${id}`)
-    return firstValueFrom<{ message: string; success: boolean }>(
-      this.orderClient.send({ cmd: 'order-delete' }, { id })
-    )
+    return firstValueFrom<{ message: string; success: boolean }>(this.orderClient.send({ cmd: 'order-delete' }, { id }))
   }
 }

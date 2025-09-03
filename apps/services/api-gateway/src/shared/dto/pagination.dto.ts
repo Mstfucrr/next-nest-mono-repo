@@ -39,11 +39,12 @@ export class PaginationQueryDto {
   @Type(() => SearchParamDto)
   @Transform(
     ({ value }) => {
+      console.log('value', value)
       const arr = Array.isArray(value) ? value : [value]
       const parsed = arr.flatMap(item => {
         if (typeof item === 'string') {
           try {
-            return [JSON.parse(item) as SearchParamDto]
+            return JSON.parse(item) as SearchParamDto
           } catch {
             return []
           }

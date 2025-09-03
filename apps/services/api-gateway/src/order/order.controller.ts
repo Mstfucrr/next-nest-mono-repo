@@ -1,22 +1,11 @@
 import { OrderEntity, PaginationInput } from '@dailyshop/shared-types'
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-  UsePipes,
-  ValidationPipe
-} from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common'
 import { ApiExtraModels, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { PaginationQueryDto } from '../shared/dto/pagination.dto'
-import { OrderService } from './order.service'
 import { CreateOrderDto } from './dto/create-order.dto'
-import { UpdateOrderDto } from './dto/update-order.dto'
 import { OrderPaginationQueryDto } from './dto/pagination.dto'
+import { UpdateOrderDto } from './dto/update-order.dto'
+import { OrderService } from './order.service'
 
 @ApiTags('Order')
 @ApiExtraModels(PaginationQueryDto)
