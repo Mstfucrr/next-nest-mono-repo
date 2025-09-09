@@ -49,6 +49,7 @@ export class CourierRepository implements ICourierRepository {
     >({
       payload,
       searchable: {
+        id: 'string',
         name: 'string',
         phone: 'string',
         mail: 'string',

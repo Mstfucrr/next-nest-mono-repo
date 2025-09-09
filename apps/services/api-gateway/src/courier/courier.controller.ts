@@ -51,6 +51,8 @@ export class CourierController {
 
   @Get('pagination')
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @ApiResponse({ status: 200, description: 'List of couriers by pagination' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   findAllWithPagination(@Query() payload: CourierPaginationQueryDto) {
     console.log('payload', payload)
     return this.courierService.findAllWithPagination(payload as PaginationInput<CourierEntity>)
@@ -59,6 +61,7 @@ export class CourierController {
   @Get('working')
   @ApiOperation({ summary: 'Get couriers by working status' })
   @ApiResponse({ status: 200, description: 'List of couriers by working status' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiQuery({
     name: 'working',
     required: false,
