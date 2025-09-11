@@ -183,13 +183,13 @@ export class UpdateCourierDto {
   onlineReasonId?: string
 
   @ApiProperty({
-    example: 'active',
+    example: true,
     description: 'State of the courier',
     required: false
   })
-  @IsString()
+  @IsBoolean()
   @IsOptional()
-  state?: string
+  state?: boolean
 
   @ApiProperty({
     example: true,

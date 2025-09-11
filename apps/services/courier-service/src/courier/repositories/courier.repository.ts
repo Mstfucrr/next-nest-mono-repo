@@ -28,7 +28,13 @@ export class CourierRepository implements ICourierRepository {
   }
 
   async update(id: string, dto: UpdateCourierDto): Promise<CourierEntity> {
-    return await this.prisma.courier.update({ where: { id }, data: dto })
+    return await this.prisma.courier.update({
+      where: { id },
+      data: {
+        ...dto,
+        state: dto.state ? 'ready' : 'deactivated'
+      }
+    })
   }
 
   async delete(id: string): Promise<boolean> {
@@ -69,7 +75,9 @@ export class CourierRepository implements ICourierRepository {
           phone: true,
           mail: true,
           tckn: true,
-          state: true
+          state: true,
+          isWorking: true,
+          createdAt: true
         }
       }
     })

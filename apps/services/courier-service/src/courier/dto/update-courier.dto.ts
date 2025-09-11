@@ -83,7 +83,7 @@ export class UpdateCourierDto {
 
   @IsString()
   @IsOptional()
-  state?: string
+  state?: boolean
 
   @IsBoolean()
   @IsOptional()
